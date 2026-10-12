@@ -12,7 +12,6 @@ import sanitizeHtml from 'sanitize-html';
 import { publicUser, verifyPassword, hashPassword, canCall } from './account-policy.js';
 import { registerPrinting } from './printing.js';
 import { registerPatientVisits } from './patient-visits.js';
-import { productionAccess } from './production-access.js';
 import { serveProductionApp } from './production-static.js';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -25,7 +24,6 @@ const PORT = process.env.PORT || 3001;
 if (process.env.NODE_ENV === 'production') app.set('trust proxy', 1);
 
 app.use(cors());
-app.use(productionAccess());
 app.use(express.json({ limit: '20mb' }));
 
 // Initialize Radio Clinic SQLite Database

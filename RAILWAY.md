@@ -53,5 +53,5 @@ npm run build
 npm start
 ```
 
-Pour lancer en production, définir `NODE_ENV=production`, `APP_ACCESS_PASSWORD`,
+Pour lancer en production, définir `NODE_ENV=production`,
 `DB_PATH` et `UPLOADS_PATH`. Le serveur écoute sur `0.0.0.0:$PORT`.
