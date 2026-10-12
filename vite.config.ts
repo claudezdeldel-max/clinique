@@ -15,6 +15,7 @@ export default defineConfig({
     'import.meta.env.VITE_BASENAME': JSON.stringify(process.env.VITE_BASENAME || ''),
   },
   server: {
+    // The copied Finance document is built alongside the React application.
     host: true,
     // Database, uploads and verification artifacts must not reload an open editor.
     watch: { ignored: ['**/server/**', '**/scratch/**', '**/test-results/**'] },
@@ -23,6 +24,11 @@ export default defineConfig({
         target: process.env.VITE_API_TARGET || 'http://localhost:3001',
         changeOrigin: true,
       },
+    },
+  },
+  build: {
+    rollupOptions: {
+      input: { app: path.resolve(__dirname, 'index.html'), finance: path.resolve(__dirname, 'finance-reference.html') },
     },
   },
 })

@@ -12,6 +12,7 @@ import sanitizeHtml from 'sanitize-html';
 import { publicUser, verifyPassword, hashPassword, canCall } from './account-policy.js';
 import { registerPrinting } from './printing.js';
 import { registerPatientVisits } from './patient-visits.js';
+import { registerFinance } from './finance.js';
 import { serveProductionApp } from './production-static.js';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -34,6 +35,7 @@ registerClinicResources(app, db);
 registerClinicSettings(app, db, uploadsDir);
 registerPrinting(app, db);
 registerPatientVisits(app, db);
+registerFinance(app, db);
 
 const cleanReport = html => sanitizeHtml(String(html || ''), {
   allowedTags: sanitizeHtml.defaults.allowedTags.concat(['h1', 'h2', 'u', 's']),

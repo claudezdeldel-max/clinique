@@ -141,7 +141,7 @@ export function registerClinicSettings(app, db, uploadsDir) {
     if (req.account?.role === 'admin') return next();
     const module = MODULES.find(m => m[3].some(prefix => req.path === `/${prefix}` || req.path.startsWith(`/${prefix}/`)));
     const policy = req.account && module && config.permissions[req.account.role]?.[module[0]];
-    const modifiesExisting = req.method === 'POST' && /^\/(reports\/[^/]+\/(validate|print)|queue\/(reset|pause))$/.test(req.path);
+    const modifiesExisting = req.method === 'POST' && /^\/(reports\/[^/]+\/(validate|print)|queue\/(reset|pause)|finance\/payments\/[^/]+\/collect)$/.test(req.path);
     const action = modifiesExisting ? 'edit' : ['GET', 'HEAD'].includes(req.method) ? 'view' : req.method === 'DELETE' ? 'delete' : ['PUT', 'PATCH'].includes(req.method) ? 'edit' : 'create';
     if (policy && (!policy.view || !policy[action])) return res.status(403).json({ error: 'Cette action est désactivée pour votre rôle.' });
     next();

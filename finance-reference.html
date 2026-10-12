@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GestCom — Finance & Comptabilité</title>
+
+
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+
+
+<style>
+  body { font-family: 'Inter', sans-serif; }
+  ::-webkit-scrollbar { width: 8px; height: 8px; }
+  ::-webkit-scrollbar-track { background: #f1f5f9; }
+  ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+  ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+  [x-cloak] { display: none !important; }
+  .sidebar-link.active {
+    background: linear-gradient(90deg, #4f46e5 0%, #6366f1 100%);
+    color: white;
+    box-shadow: 0 4px 12px rgba(79,70,229,.35);
+  }
+  .sidebar-link.active .icon { color: white; }
+  .row-hover:hover { background-color: #f8fafc; }
+  .tab-active {
+    color: #4f46e5;
+    border-bottom-color: #4f46e5;
+  }
+  .subtab-active {
+    background: #4f46e5;
+    color: white;
+    box-shadow: 0 2px 8px rgba(79,70,229,.3);
+  }
+</style>
+<link rel="stylesheet" href="/cima/finance-reference.css">
+<script type="module" src="/src/app/finance/reference-runtime.js"></script>
+</head>
+<body class="bg-slate-100 text-slate-800" x-data="financeComptaApp()" x-cloak>
+<div class="flex h-screen overflow-hidden"><div class="flex-1 flex flex-col overflow-hidden">
+    <main class="flex-1 overflow-y-auto p-4 lg:p-8">
+
+      <p x-show="error" x-cloak role="alert" class="mb-4 p-4 bg-red-50 text-red-700 rounded-lg" x-text="error"></p>
+      <p x-show="loading" class="mb-4 text-sm text-slate-500">Chargement des données…</p>
+      <!-- En-tête -->
+      <div class="mb-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div>
+          <h1 class="text-2xl font-bold text-slate-800">Finance & Comptabilité</h1>
+          <p class="text-sm text-slate-500 mt-1">Trésorerie, encaissements, écritures comptables et états financiers.</p>
+        </div>
+        <div class="flex flex-wrap items-center gap-2">
+          <div class="flex flex-wrap bg-white rounded-lg border border-slate-200 p-1 shadow-sm">
+            <button @click="periode='jour'" :class="periode==='jour' ? 'bg-indigo-600 text-white' : 'text-slate-600'" class="px-3 py-1.5 text-xs font-medium rounded-md transition">Aujourd’hui</button>
+            <button @click="periode='semaine'" :class="periode==='semaine' ? 'bg-indigo-600 text-white' : 'text-slate-600'" class="px-3 py-1.5 text-xs font-medium rounded-md transition">Cette semaine</button>
+            <button @click="periode='mois'" :class="periode==='mois' ? 'bg-indigo-600 text-white' : 'text-slate-600'" class="px-3 py-1.5 text-xs font-medium rounded-md transition">Ce mois</button>
+            <button @click="periode='trimestre'" :class="periode==='trimestre' ? 'bg-indigo-600 text-white' : 'text-slate-600'" class="px-3 py-1.5 text-xs font-medium rounded-md transition">Trimestre</button>
+            <button @click="periode='annee'" :class="periode==='annee' ? 'bg-indigo-600 text-white' : 'text-slate-600'" class="px-3 py-1.5 text-xs font-medium rounded-md transition">Année</button>
+          </div>
+          <button disabled title="Comptabilité non activée" class="bg-indigo-600 text-white text-sm font-medium px-4 py-2 rounded-lg shadow-sm shadow-indigo-500/30 flex items-center gap-2 opacity-50 cursor-not-allowed">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+            Nouvelle écriture
+          </button>
+        </div>
+      </div>
+
+      <!-- Sélecteur principal : Finance / Comptabilité -->
+      <div class="mb-6 flex items-center gap-2 bg-white rounded-xl border border-slate-200 p-1.5 shadow-sm w-fit">
+        <button @click="module='finance'" :class="module==='finance' ? 'subtab-active' : 'text-slate-600 hover:bg-slate-50'" class="px-5 py-2.5 text-sm font-semibold rounded-lg transition flex items-center gap-2">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          Finance
+        </button>
+        <button disabled title="Comptabilité non activée" :class="module==='comptabilite' ? 'subtab-active' : 'text-slate-600 hover:bg-slate-50'" class="px-5 py-2.5 text-sm font-semibold rounded-lg transition flex items-center gap-2">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m-6 4h6m-6 4h6M5 3h14a2 2 0 012 2v14a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2z"/></svg>
+          Comptabilité
+        </button>
+      </div>
+
+      <!-- ============================================================ -->
+      <!-- ==================== VUE FINANCE ============================ -->
+      <!-- ============================================================ -->
+      <div x-show="module==='finance'">
+
+        <!-- KPI Financiers -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 mb-6">
+          <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm">
+            <div class="flex items-start justify-between">
+              <div>
+                <p class="text-xs font-medium text-slate-500 uppercase tracking-wide">Trésorerie</p>
+                <p class="text-2xl font-bold text-slate-800 mt-2"><span x-text="number(summary.treasury)"></span> <span class="text-sm font-medium text-slate-500">DZD</span></p>
+              </div>
+              <div class="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
+              </div>
+            </div>
+            <div class="mt-3 flex items-center gap-1 text-xs">
+              <span class="text-emerald-600 font-semibold flex items-center gap-0.5">
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 10l7-7m0 0l7 7m-7-7v18"/></svg>
+                <span x-text="summary.variation === null ? '—' : number(summary.variation) + ' %'"></span>
+              </span>
+              <span class="text-slate-500">depuis le début de période</span>
+            </div>
+          </div>
+
+          <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm">
+            <div class="flex items-start justify-between">
+              <div>
+                <p class="text-xs font-medium text-slate-500 uppercase tracking-wide">Encaissements</p>
+                <p class="text-2xl font-bold text-emerald-600 mt-2"><span x-text="'+' + number(summary.revenue)"></span> <span class="text-sm font-medium text-slate-500">DZD</span></p>
+              </div>
+              <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 11l5-5m0 0l5 5m-5-5v12"/></svg>
+              </div>
+            </div>
+            <div class="mt-3 text-xs text-slate-500"><span class="font-semibold text-slate-700" x-text="summary.revenue_count">0</span> paiements</div>
+          </div>
+
+          <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm">
+            <div class="flex items-start justify-between">
+              <div>
+                <p class="text-xs font-medium text-slate-500 uppercase tracking-wide">Décaissements</p>
+                <p class="text-2xl font-bold text-red-600 mt-2"><span x-text="'-' + number(summary.expenses)"></span> <span class="text-sm font-medium text-slate-500">DZD</span></p>
+              </div>
+              <div class="w-10 h-10 rounded-xl bg-red-50 text-red-600 flex items-center justify-center">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 13l-5 5m0 0l-5-5m5 5V6"/></svg>
+              </div>
+            </div>
+            <div class="mt-3 text-xs text-slate-500"><span class="font-semibold text-slate-700" x-text="summary.expense_count">0</span> paiements</div>
+          </div>
+
+          <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm">
+            <div class="flex items-start justify-between">
+              <div>
+                <p class="text-xs font-medium text-slate-500 uppercase tracking-wide">Impayés</p>
+                <p class="text-2xl font-bold text-amber-600 mt-2"><span x-text="number(summary.unpaid)"></span> <span class="text-sm font-medium text-slate-500">DZD</span></p>
+              </div>
+              <div class="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+              </div>
+            </div>
+            <div class="mt-3 text-xs text-slate-500"><span class="font-semibold text-red-600" x-text="summary.unpaid_count">0</span> factures à régler</div>
+          </div>
+        </div>
+
+        <!-- Graphiques -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
+          <div class="lg:col-span-2 bg-white rounded-2xl p-5 border border-slate-200 shadow-sm">
+            <div class="flex items-center justify-between mb-4">
+              <div>
+                <h3 class="font-semibold text-slate-800">Flux de trésorerie</h3>
+                <p class="text-xs text-slate-500">Encaissements vs décaissements</p>
+              </div>
+              <div class="flex items-center gap-3 text-xs">
+                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span> Encaissements</span>
+                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-red-500"></span> Décaissements</span>
+              </div>
+            </div>
+            <canvas id="fluxChart" height="100"></canvas>
+          </div>
+
+          <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm">
+            <h3 class="font-semibold text-slate-800 mb-4">Répartition par examen</h3>
+            <canvas id="modePaiementChart" height="180"></canvas>
+            <div class="mt-4 space-y-2">
+              <template x-for="m in exams" :key="m.name"><div class="flex items-center justify-between text-xs">
+                <span class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full" :style="'background:' + m.color"></span><span x-text="m.name"></span></span>
+                <span class="font-semibold text-slate-700" x-text="m.percentage + ' %'"></span>
+              </div></template>
+              <p x-show="!exams.length" class="text-xs text-slate-400">Aucun encaissement sur cette période</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Onglets Finance -->
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+          <div class="border-b border-slate-100 px-5">
+            <div class="flex items-center gap-6 -mb-px overflow-x-auto">
+              <button @click="tabFinance='paiements'" :class="tabFinance==='paiements' ? 'tab-active' : 'text-slate-500 hover:text-slate-700'" class="py-3 text-sm font-medium border-b-2 border-transparent transition whitespace-nowrap">Paiements récents</button>
+              <button @click="tabFinance='impayes'" :class="tabFinance==='impayes' ? 'tab-active' : 'text-slate-500 hover:text-slate-700'" class="py-3 text-sm font-medium border-b-2 border-transparent transition whitespace-nowrap flex items-center gap-2">
+                Factures impayées
+                <span class="text-[10px] bg-red-100 text-red-700 px-2 py-0.5 rounded-full font-semibold" x-text="summary.unpaid_count">0</span>
+              </button>
+              <button @click="tabFinance='echeances'" :class="tabFinance==='echeances' ? 'tab-active' : 'text-slate-500 hover:text-slate-700'" class="py-3 text-sm font-medium border-b-2 border-transparent transition whitespace-nowrap">Échéances</button>
+              <button @click="tabFinance='depenses'" :class="tabFinance==='depenses' ? 'tab-active' : 'text-slate-500 hover:text-slate-700'" class="py-3 text-sm font-medium border-b-2 border-transparent transition whitespace-nowrap">Dépenses</button>
+            </div>
+          </div>
+
+          <!-- Paiements -->
+          <div x-show="tabFinance==='paiements'" class="overflow-x-auto">
+            <table class="w-full text-sm">
+              <thead>
+                <tr class="bg-slate-50 text-xs uppercase text-slate-500 tracking-wide border-b border-slate-100">
+                  <th class="text-left font-semibold py-3 px-5">Référence</th>
+                  <th class="text-left font-semibold py-3 px-5">Tiers</th>
+                  <th class="text-left font-semibold py-3 px-5">Date</th>
+                  <th class="text-left font-semibold py-3 px-5">Mode</th>
+                  <th class="text-right font-semibold py-3 px-5">Montant</th>
+                  <th class="text-center font-semibold py-3 px-5">Type</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100">
+                <template x-for="p in paiements" :key="p.id">
+                  <tr class="row-hover transition">
+                    <td class="py-3 px-5 font-mono text-xs text-slate-600" x-text="p.ref"></td>
+                    <td class="py-3 px-5">
+                      <p class="font-medium text-slate-800" x-text="p.tiers"></p>
+                      <p class="text-xs text-slate-500" x-text="p.facture"></p>
+                    </td>
+                    <td class="py-3 px-5 text-slate-600" x-text="p.date"></td>
+                    <td class="py-3 px-5">
+                      <span class="inline-flex items-center gap-1.5 text-xs font-medium px-2.5 py-1 rounded-full bg-slate-100 text-slate-700">
+                        <span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span>
+                        <span x-text="p.mode"></span>
+                      </span>
+                    </td>
+                    <td class="py-3 px-5 text-right font-semibold" :class="p.type==='encaissement' ? 'text-emerald-600' : 'text-red-600'">
+                      <span x-text="(p.type==='encaissement' ? '+' : '-') + ' ' + formatMoney(p.montant)"></span>
+                    </td>
+                    <td class="py-3 px-5 text-center">
+                      <span class="inline-flex items-center gap-1 text-xs font-medium px-2.5 py-1 rounded-full"
+                            :class="p.type==='encaissement' ? 'bg-emerald-50 text-emerald-700' : 'bg-red-50 text-red-700'"
+                            x-text="p.type==='encaissement' ? 'Encaissement' : 'Décaissement'"></span>
+                    </td>
+                  </tr>
+                </template>
+                <tr x-show="!paiements.length"><td colspan="6" class="py-10 px-5 text-center text-slate-400">Aucune donnée à afficher</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Impayés -->
+          <div x-show="tabFinance==='impayes'" x-cloak class="overflow-x-auto">
+            <table class="w-full text-sm">
+              <thead>
+                <tr class="bg-slate-50 text-xs uppercase text-slate-500 tracking-wide border-b border-slate-100">
+                  <th class="text-left font-semibold py-3 px-5">Facture</th>
+                  <th class="text-left font-semibold py-3 px-5">Client</th>
+                  <th class="text-left font-semibold py-3 px-5">Échéance</th>
+                  <th class="text-center font-semibold py-3 px-5">Retard</th>
+                  <th class="text-right font-semibold py-3 px-5">Montant</th>
+                  <th class="text-right font-semibold py-3 px-5">Actions</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100">
+                <template x-for="f in impayes" :key="f.id">
+                  <tr class="row-hover transition">
+                    <td class="py-3 px-5">
+                      <p class="font-semibold text-slate-800" x-text="f.ref"></p>
+                      <p class="text-xs text-slate-500" x-text="f.date"></p>
+                    </td>
+                    <td class="py-3 px-5">
+                      <p class="font-medium text-slate-800" x-text="f.client"></p>
+                      <p class="text-xs text-slate-500" x-text="f.email"></p>
+                    </td>
+                    <td class="py-3 px-5 text-slate-600" x-text="f.echeance"></td>
+                    <td class="py-3 px-5 text-center">
+                      <span class="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full"
+                            :class="f.retard > 30 ? 'bg-red-100 text-red-700' : f.retard > 15 ? 'bg-amber-100 text-amber-700' : 'bg-slate-100 text-slate-700'"
+                            x-text="f.retard + ' j'"></span>
+                    </td>
+                    <td class="py-3 px-5 text-right font-bold text-red-600" x-text="formatMoney(f.montant)"></td>
+                    <td class="py-3 px-5 text-right">
+                      <div class="flex items-center justify-end gap-1">
+                        <button @click="openCollection(f)" class="text-xs font-medium text-indigo-600 hover:text-indigo-700 hover:bg-indigo-50 px-2.5 py-1.5 rounded-lg transition">Encaisser</button>
+                        <button class="p-1.5 text-slate-400 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition" title="Préparer une relance" @click="openReminder(f)">
+                          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                </template>
+                <tr x-show="!impayes.length"><td colspan="6" class="py-10 px-5 text-center text-slate-400">Aucune donnée à afficher</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Échéances -->
+          <div x-show="tabFinance==='echeances'" x-cloak class="overflow-x-auto">
+            <table class="w-full text-sm">
+              <thead>
+                <tr class="bg-slate-50 text-xs uppercase text-slate-500 tracking-wide border-b border-slate-100">
+                  <th class="text-left font-semibold py-3 px-5">Date</th>
+                  <th class="text-left font-semibold py-3 px-5">Libellé</th>
+                  <th class="text-left font-semibold py-3 px-5">Tiers</th>
+                  <th class="text-center font-semibold py-3 px-5">Type</th>
+                  <th class="text-right font-semibold py-3 px-5">Montant</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100">
+                <template x-for="e in echeances" :key="e.id">
+                  <tr class="row-hover transition">
+                    <td class="py-3 px-5">
+                      <p class="font-semibold text-slate-800" x-text="e.date"></p>
+                      <p class="text-xs text-slate-500" x-text="e.jours"></p>
+                    </td>
+                    <td class="py-3 px-5 font-medium text-slate-800" x-text="e.libelle"></td>
+                    <td class="py-3 px-5 text-slate-600" x-text="e.tiers"></td>
+                    <td class="py-3 px-5 text-center">
+                      <span class="inline-flex text-xs font-medium px-2.5 py-1 rounded-full"
+                            :class="e.type==='entree' ? 'bg-emerald-50 text-emerald-700' : 'bg-red-50 text-red-700'"
+                            x-text="e.type==='entree' ? 'À recevoir' : 'À payer'"></span>
+                    </td>
+                    <td class="py-3 px-5 text-right font-semibold" :class="e.type==='entree' ? 'text-emerald-600' : 'text-red-600'" x-text="formatMoney(e.montant)"></td>
+                  </tr>
+                </template>
+                <tr x-show="!echeances.length"><td colspan="5" class="py-10 px-5 text-center text-slate-400">Aucune donnée à afficher</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Dépenses -->
+          <div x-show="tabFinance==='depenses'" x-cloak class="overflow-x-auto">
+            <div class="p-4 border-b border-slate-100 flex justify-end"><button @click="openExpense()" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-medium px-3 py-2 rounded-lg transition">Ajouter une dépense</button></div>
+            <table class="w-full text-sm">
+              <thead>
+                <tr class="bg-slate-50 text-xs uppercase text-slate-500 tracking-wide border-b border-slate-100">
+                  <th class="text-left font-semibold py-3 px-5">Référence</th>
+                  <th class="text-left font-semibold py-3 px-5">Catégorie</th>
+                  <th class="text-left font-semibold py-3 px-5">Fournisseur</th>
+                  <th class="text-left font-semibold py-3 px-5">Date</th>
+                  <th class="text-right font-semibold py-3 px-5">Montant</th>
+                  <th class="text-center font-semibold py-3 px-5">Statut</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100">
+                <template x-for="d in depenses" :key="d.id">
+                  <tr class="row-hover transition">
+                    <td class="py-3 px-5 font-mono text-xs text-slate-600" x-text="d.ref"></td>
+                    <td class="py-3 px-5">
+                      <span class="inline-flex text-xs font-medium px-2.5 py-1 rounded-full" :class="d.categorieClass" x-text="d.categorie"></span>
+                    </td>
+                    <td class="py-3 px-5 text-slate-700" x-text="d.fournisseur"></td>
+                    <td class="py-3 px-5 text-slate-600" x-text="d.date"></td>
+                    <td class="py-3 px-5 text-right font-semibold text-red-600" x-text="'- ' + formatMoney(d.montant)"></td>
+                    <td class="py-3 px-5 text-center">
+                      <span class="inline-flex items-center gap-1 text-xs font-medium px-2.5 py-1 rounded-full"
+                            :class="d.statut==='Payé' ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-700'">
+                        <span class="w-1.5 h-1.5 rounded-full" :class="d.statut==='Payé' ? 'bg-emerald-500' : 'bg-amber-500'"></span>
+                        <span x-text="d.statut"></span>
+                      </span>
+                    </td>
+                  </tr>
+                </template>
+                <tr x-show="!depenses.length"><td colspan="6" class="py-10 px-5 text-center text-slate-400">Aucune donnée à afficher</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+
+</main></div></div>
+
+<div x-show="collectionOpen" x-cloak role="dialog" aria-modal="true" aria-label="Encaisser un règlement" class="fixed inset-0 z-50 flex items-center justify-center p-4" @keydown.escape.window="if (!saving) collectionOpen=false">
+  <div @click="if (!saving) collectionOpen=false" class="absolute inset-0 bg-slate-900/50 backdrop-blur-sm"></div>
+  <form @submit.prevent="saveCollection()" class="relative bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
+    <div class="flex items-center justify-between p-5 border-b border-slate-100"><div><h3 class="text-lg font-bold text-slate-800">Encaisser un règlement</h3><p class="text-sm text-slate-500" x-text="collection.client + ' — ' + collection.ref"></p></div><button type="button" @click="collectionOpen=false" :disabled="saving" aria-label="Fermer" class="p-2 text-slate-400">✕</button></div>
+    <div class="p-5 space-y-4">
+      <p class="text-sm text-slate-500">Solde à régler : <strong x-text="formatMoney(collection.montant)"></strong></p>
+      <p x-show="formError" role="alert" class="text-sm text-red-600" x-text="formError"></p>
+      <label class="block text-sm font-medium text-slate-700">Montant encaissé *<input aria-label="Montant encaissé" x-model="collection.amount" type="number" required min="0.01" step="0.01" :max="collection.montant" class="mt-1.5 w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-indigo-500/30"></label>
+      <label class="block text-sm font-medium text-slate-700">Mode de paiement *<select aria-label="Mode de paiement" x-model="collection.method" required class="mt-1.5 w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2.5 text-sm"><option value="">Choisir…</option><template x-for="method in paymentMethods" :key="method"><option :value="method" x-text="method"></option></template></select></label>
+    </div>
+    <div class="flex justify-end gap-2 p-5 border-t border-slate-100"><button type="button" @click="collectionOpen=false" :disabled="saving" class="px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-100 rounded-lg">Annuler</button><button type="submit" :disabled="saving" class="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium px-4 py-2.5 rounded-lg disabled:opacity-50" x-text="saving ? 'Enregistrement…' : 'Enregistrer le règlement'"></button></div>
+  </form>
+</div>
+<div x-show="expenseOpen" x-cloak role="dialog" aria-modal="true" aria-label="Ajouter une dépense" class="fixed inset-0 z-50 flex items-center justify-center p-4" @keydown.escape.window="if (!saving) expenseOpen=false">
+  <div @click="if (!saving) expenseOpen=false" class="absolute inset-0 bg-slate-900/50 backdrop-blur-sm"></div>
+  <form @submit.prevent="saveExpense()" class="relative bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col">
+    <div class="flex items-center justify-between p-5 border-b border-slate-100"><div><h3 class="text-lg font-bold text-slate-800">Ajouter une dépense</h3><p class="text-sm text-slate-500">Enregistrer un décaissement de la clinique</p></div><button type="button" @click="expenseOpen=false" :disabled="saving" aria-label="Fermer" class="p-2 text-slate-400">✕</button></div>
+    <div class="p-5 overflow-y-auto space-y-4">
+      <p x-show="formError" role="alert" class="text-sm text-red-600" x-text="formError"></p>
+      <label class="block text-sm font-medium text-slate-700">Libellé *<input aria-label="Libellé" x-model="expense.description" required maxlength="500" class="mt-1.5 w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-indigo-500/30" placeholder="Ex : Achat de consommables"></label>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <label class="block text-sm font-medium text-slate-700">Catégorie *<input aria-label="Catégorie" x-model="expense.category" required maxlength="100" list="expense-categories" class="mt-1.5 w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2.5 text-sm"><datalist id="expense-categories"><option>Loyer</option><option>Fournitures</option><option>Énergie</option><option>Salaires</option><option>Maintenance</option><option>Autres</option></datalist></label>
+        <label class="block text-sm font-medium text-slate-700">Fournisseur<input aria-label="Fournisseur" x-model="expense.party" maxlength="200" class="mt-1.5 w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2.5 text-sm"></label>
+        <label class="block text-sm font-medium text-slate-700">Date de paiement *<input aria-label="Date de paiement" x-model="expense.date" type="date" required :max="today" class="mt-1.5 w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2.5 text-sm"></label>
+        <label class="block text-sm font-medium text-slate-700">Montant *<input aria-label="Montant de la dépense" x-model="expense.amount" type="number" required min="0.01" step="0.01" class="mt-1.5 w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2.5 text-sm"></label>
+        <label class="block text-sm font-medium text-slate-700 md:col-span-2">Mode de paiement *<select aria-label="Mode de paiement" x-model="expense.method" required class="mt-1.5 w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2.5 text-sm"><option value="">Choisir…</option><template x-for="method in paymentMethods" :key="method"><option :value="method" x-text="method"></option></template></select></label>
+      </div>
+    </div>
+    <div class="flex justify-end gap-2 p-5 border-t border-slate-100"><button type="button" @click="expenseOpen=false" :disabled="saving" class="px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-100 rounded-lg">Annuler</button><button type="submit" :disabled="saving" class="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium px-4 py-2.5 rounded-lg disabled:opacity-50" x-text="saving ? 'Enregistrement…' : 'Enregistrer la dépense'"></button></div>
+  </form>
+</div>
+<div x-show="reminderOpen" x-cloak role="dialog" aria-modal="true" aria-label="Préparer une relance" class="fixed inset-0 z-50 flex items-center justify-center p-4" @keydown.escape.window="reminderOpen=false">
+  <div @click="reminderOpen=false" class="absolute inset-0 bg-slate-900/50 backdrop-blur-sm"></div>
+  <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-lg p-5 space-y-4"><h3 class="text-lg font-bold text-slate-800">Préparer une relance</h3><p class="text-sm text-slate-500">Texte à remettre au secrétariat. Aucun message n’est envoyé automatiquement.</p><textarea aria-label="Texte de relance" x-model="reminder" rows="6" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2.5 text-sm"></textarea><p x-show="formError" role="alert" class="text-sm text-red-600" x-text="formError"></p><div class="flex justify-end gap-2"><button @click="reminderOpen=false" class="px-4 py-2.5 text-sm text-slate-700 rounded-lg">Fermer</button><button @click="copyReminder()" class="bg-indigo-600 text-white text-sm font-medium px-4 py-2.5 rounded-lg">Copier le texte</button></div></div>
+</div>
+
+<!-- ============ TOAST ============ -->
+<div x-show="toast.show" x-cloak
+     x-transition:enter="transition ease-out duration-300"
+     x-transition:enter-start="opacity-0 translate-y-2"
+     x-transition:enter-end="opacity-100 translate-y-0"
+     class="fixed bottom-6 right-6 z-50 bg-slate-800 text-white text-sm px-4 py-3 rounded-xl shadow-2xl flex items-center gap-3">
+  <div class="w-6 h-6 rounded-full bg-emerald-500 flex items-center justify-center shrink-0">
+    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+  </div>
+  <span x-text="toast.message"></span>
+</div>
+
+
+</body>
+</html>
