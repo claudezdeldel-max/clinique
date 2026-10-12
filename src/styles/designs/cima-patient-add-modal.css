@@ -1,0 +1,628 @@
+/* Modal and form styles copied from INTERFACE  CIMA/FICHE PATIENT.html; scoped to the add dialog. */
+.cima-patient-form {
+  --primary: #0ea5e9;
+  --primary-dark: #0284c7;
+  --secondary: #6366f1;
+  --success: #10b981;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+  --purple: #8b5cf6;
+  --pink: #ec4899;
+
+  --bg: #f8fafc;
+  --bg-card: #ffffff;
+  --bg-card-2: #f8fafc;
+  --bg-hover: #f1f5f9;
+  --text: #0f172a;
+  --text-2: #334155;
+  --text-muted: #64748b;
+  --border: #e2e8f0;
+  --border-2: #f1f5f9;
+  --shadow: 0 4px 20px rgba(0,0,0,0.04);
+  --shadow-lg: 0 12px 30px rgba(0,0,0,0.08);
+  --overlay: rgba(15,23,42,0.6);
+
+font-family: 'CimaInter', Inter, sans-serif;
+color: var(--text);
+line-height: normal;
+}
+.dark .cima-patient-form {
+  --bg: #0a0f1c;
+  --bg-card: #131c2f;
+  --bg-card-2: #1a2540;
+  --bg-hover: #1e2a45;
+  --text: #f1f5f9;
+  --text-2: #cbd5e1;
+  --text-muted: #94a3b8;
+  --border: #1e293b;
+  --border-2: #243043;
+  --shadow: 0 4px 20px rgba(0,0,0,0.3);
+  --shadow-lg: 0 12px 30px rgba(0,0,0,0.5);
+  --overlay: rgba(0,0,0,0.75);
+}
+.cima-patient-form, .cima-patient-form * { margin: 0; padding: 0; box-sizing: border-box; }
+/* ============ BUTTONS ============ */
+.cima-patient-form .btn {
+  padding: 11px 20px;
+  border-radius: 11px;
+  border: none;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s;
+  text-decoration: none;
+  font-family: inherit;
+}
+
+.cima-patient-form .btn-primary {
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  color: white;
+  box-shadow: 0 4px 14px rgba(14,165,233,0.3);
+}
+
+.cima-patient-form .btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 22px rgba(14,165,233,0.45);
+}
+
+.cima-patient-form .btn-success {
+  background: linear-gradient(135deg, var(--success), #059669);
+  color: white;
+  box-shadow: 0 4px 14px rgba(16,185,129,0.3);
+}
+
+.cima-patient-form .btn-success:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 22px rgba(16,185,129,0.45);
+}
+
+.cima-patient-form .btn-outline {
+  background: var(--bg-card);
+  color: var(--text-2);
+  border: 1px solid var(--border);
+}
+
+.cima-patient-form .btn-outline:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+  background: var(--bg-hover);
+}
+
+.cima-patient-form .btn-ghost {
+  background: transparent;
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+}
+
+.cima-patient-form .btn-ghost:hover {
+  background: var(--bg-hover);
+  color: var(--text);
+}
+
+.cima-patient-form .btn-lg {
+  padding: 13px 26px;
+  font-size: 14px;
+}
+
+/* ============ MODAL ============ */
+.cima-patient-form.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: var(--overlay);
+  backdrop-filter: blur(6px);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+  padding: 20px;
+  animation: cima-patient-fadeOverlay 0.3s ease;
+}
+
+.cima-patient-form.modal-overlay.active { display: flex; }
+
+@keyframes cima-patient-fadeOverlay {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.cima-patient-form .modal {
+  background: var(--bg-card);
+  border-radius: 20px;
+  width: 100%;
+  max-width: 900px;
+  max-height: 92vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 25px 60px rgba(0,0,0,0.3);
+  animation: cima-patient-slideUp 0.35s ease;
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+
+@keyframes cima-patient-slideUp {
+  from { opacity: 0; transform: translateY(30px) scale(0.97); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.cima-patient-form .modal-header {
+  padding: 22px 28px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: linear-gradient(135deg, rgba(14,165,233,0.05), rgba(99,102,241,0.05));
+}
+
+.cima-patient-form .modal-header .mh-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.cima-patient-form .modal-header .mh-icon {
+  width: 46px; height: 46px;
+  border-radius: 13px;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 20px;
+  box-shadow: 0 6px 18px rgba(14,165,233,0.35);
+}
+
+.cima-patient-form .modal-header h3 {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--text);
+  margin-bottom: 3px;
+}
+
+.cima-patient-form .modal-header p {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.cima-patient-form .modal-close {
+  width: 38px; height: 38px;
+  border-radius: 11px;
+  background: var(--bg-card-2);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  font-size: 15px;
+}
+
+.cima-patient-form .modal-close:hover {
+  background: var(--danger);
+  color: white;
+  border-color: var(--danger);
+  transform: rotate(90deg);
+}
+
+.cima-patient-form .modal-body {
+  padding: 24px 28px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+/* ============ FORM STEPS ============ */
+.cima-patient-form .form-steps {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 26px;
+  padding: 6px;
+  background: var(--bg-card-2);
+  border-radius: 12px;
+  border: 1px solid var(--border);
+}
+
+.cima-patient-form .step {
+  flex: 1;
+  padding: 11px 12px;
+  border-radius: 9px;
+  text-align: center;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: none;
+  background: transparent;
+  font-family: inherit;
+  white-space: nowrap;
+}
+
+.cima-patient-form .step .step-num {
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  background: var(--bg-hover);
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  transition: all 0.3s;
+  flex-shrink: 0;
+}
+
+.cima-patient-form .step:hover { color: var(--primary); }
+
+.cima-patient-form .step.active {
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  color: white;
+  box-shadow: 0 4px 12px rgba(14,165,233,0.3);
+}
+
+.cima-patient-form .step.active .step-num {
+  background: rgba(255,255,255,0.25);
+  color: white;
+}
+
+.cima-patient-form .step.completed .step-num {
+  background: var(--success);
+  color: white;
+}
+
+.cima-patient-form .step.completed .step-num::before {
+  content: '\f00c';
+  font-family: 'Font Awesome 6 Free';
+  font-weight: 900;
+  font-size: 10px;
+}
+
+/* ============ FORM STEP CONTENT ============ */
+.cima-patient-form .form-step { display: none; animation: cima-patient-fadeIn 0.35s ease; }
+.cima-patient-form .form-step.active { display: block; }
+
+@keyframes cima-patient-fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.cima-patient-form .form-section {
+  margin-bottom: 24px;
+}
+
+.cima-patient-form .form-section:last-child { margin-bottom: 0; }
+
+.cima-patient-form .form-section-title {
+  font-size: 12px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  font-weight: 700;
+  letter-spacing: 0.6px;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.cima-patient-form .form-section-title i { color: var(--primary); font-size: 13px; }
+
+.cima-patient-form .form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+.cima-patient-form .form-grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+@media (max-width: 700px) {
+  .cima-patient-form .form-grid, .cima-patient-form .form-grid-3 { grid-template-columns: 1fr; }
+}
+
+.cima-patient-form .form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.cima-patient-form .form-group.full { grid-column: 1 / -1; }
+
+.cima-patient-form .form-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-2);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.cima-patient-form .form-label i { color: var(--primary); font-size: 11px; }
+
+.cima-patient-form .form-label .required {
+  color: var(--danger);
+  font-size: 13px;
+  line-height: 1;
+}
+
+.cima-patient-form .form-input,
+.cima-patient-form .form-select,
+.cima-patient-form .form-textarea {
+  width: 100%;
+  padding: 11px 14px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--bg-card-2);
+  color: var(--text);
+  font-size: 13px;
+  font-family: inherit;
+  transition: all 0.2s;
+}
+
+.cima-patient-form .form-input:focus,
+.cima-patient-form .form-select:focus,
+.cima-patient-form .form-textarea:focus {
+  outline: none;
+  border-color: var(--primary);
+  background: var(--bg-card);
+  box-shadow: 0 0 0 4px rgba(14,165,233,0.1);
+}
+
+.cima-patient-form .form-input::placeholder,
+.cima-patient-form .form-textarea::placeholder {
+  color: var(--text-muted);
+  opacity: 0.7;
+}
+
+.cima-patient-form .form-select {
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 14px;
+  padding-right: 36px;
+}
+
+.cima-patient-form .form-textarea {
+  resize: vertical;
+  min-height: 90px;
+  line-height: 1.5;
+}
+
+/* ============ RADIO GROUP (Sexe) ============ */
+.cima-patient-form .radio-group {
+  display: flex;
+  gap: 10px;
+}
+
+.cima-patient-form .radio-option {
+  flex: 1;
+  position: relative;
+}
+
+.cima-patient-form .radio-option input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.cima-patient-form .radio-option label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 11px 14px;
+  border: 2px solid var(--border);
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-2);
+  cursor: pointer;
+  transition: all 0.2s;
+  background: var(--bg-card-2);
+}
+
+.cima-patient-form .radio-option label i { font-size: 14px; }
+
+.cima-patient-form .radio-option label:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.cima-patient-form .radio-option input:checked + label {
+  border-color: var(--primary);
+  background: rgba(14,165,233,0.1);
+  color: var(--primary);
+  box-shadow: 0 0 0 4px rgba(14,165,233,0.08);
+}
+
+/* ============ CHECKBOX TAGS (Allergies) ============ */
+.cima-patient-form .checkbox-tags {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.cima-patient-form .checkbox-tag {
+  position: relative;
+}
+
+.cima-patient-form .checkbox-tag input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.cima-patient-form .checkbox-tag label {
+  padding: 7px 14px;
+  border-radius: 20px;
+  border: 1.5px solid var(--border);
+  background: var(--bg-card-2);
+  color: var(--text-2);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.cima-patient-form .checkbox-tag label:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.cima-patient-form .checkbox-tag input:checked + label {
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  color: white;
+  border-color: transparent;
+  box-shadow: 0 4px 10px rgba(14,165,233,0.3);
+}
+
+.cima-patient-form .checkbox-tag input:checked + label::before {
+  content: '\f00c';
+  font-family: 'Font Awesome 6 Free';
+  font-weight: 900;
+  font-size: 10px;
+}
+
+/* ============ AVATAR UPLOAD ============ */
+.cima-patient-form .avatar-upload {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 16px;
+  background: var(--bg-card-2);
+  border: 2px dashed var(--border);
+  border-radius: 14px;
+  transition: all 0.2s;
+}
+
+.cima-patient-form .avatar-upload:hover { border-color: var(--primary); background: var(--bg-hover); }
+
+.cima-patient-form .avatar-preview {
+  width: 76px; height: 76px;
+  border-radius: 18px;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26px;
+  font-weight: 800;
+  color: white;
+  flex-shrink: 0;
+}
+
+.cima-patient-form .avatar-upload .info { flex: 1; }
+.cima-patient-form .avatar-upload .info p:first-child { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+.cima-patient-form .avatar-upload .info p:last-child { font-size: 11px; color: var(--text-muted); margin-bottom: 10px; }
+
+/* ============ SUMMARY (step 3) ============ */
+.cima-patient-form .summary-box {
+  background: var(--bg-card-2);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 20px;
+  margin-bottom: 16px;
+}
+
+.cima-patient-form .summary-box h4 {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+.cima-patient-form .summary-box h4 i { color: var(--primary); }
+
+.cima-patient-form .summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px 20px;
+}
+
+.cima-patient-form .summary-item {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.cima-patient-form .summary-item .lbl {
+  font-size: 10px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  font-weight: 600;
+  letter-spacing: 0.4px;
+}
+
+.cima-patient-form .summary-item .val {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+/* ============ MODAL FOOTER ============ */
+.cima-patient-form .modal-footer {
+  padding: 18px 28px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  background: var(--bg-card-2);
+  flex-wrap: wrap;
+}
+
+.cima-patient-form .modal-footer .left-actions,
+.cima-patient-form .modal-footer .right-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+@media (max-width: 768px) {
+  .cima-patient-form .sidebar { transform: translateX(-100%); }
+  .cima-patient-form .sidebar.open { transform: translateX(0); }
+  .cima-patient-form .main { margin-left: 0; width: 100%; }
+  .cima-patient-form .menu-toggle { display: flex; }
+  .cima-patient-form .content { padding: 16px; }
+  .cima-patient-form .topbar { padding: 14px 16px; }
+  .cima-patient-form .modal { max-height: 100vh; border-radius: 0; }
+  .cima-patient-form.modal-overlay { padding: 0; }
+  .cima-patient-form .modal-header, .cima-patient-form .modal-body, .cima-patient-form .modal-footer { padding: 16px 18px; }
+  .cima-patient-form .form-steps { flex-direction: column; }
+  .cima-patient-form .step { justify-content: flex-start; }
+  .cima-patient-form .modal-footer { flex-direction: column-reverse; }
+  .cima-patient-form .modal-footer .left-actions,
+  .cima-patient-form .modal-footer .right-actions { width: 100%; }
+  .cima-patient-form .modal-footer .btn { flex: 1; justify-content: center; }
+}
+
+
+.cima-patient-form .modal { outline: none; }
+.cima-patient-form .form-input,
+.cima-patient-form .form-select,
+.cima-patient-form .form-textarea { border-radius: 10px !important; }
+.cima-patient-form .modal-body { min-height: 0; }
+.cima-patient-form .modal-header, .cima-patient-form .modal-footer { flex-shrink: 0; }
+.cima-patient-form .avatar-preview img { width: 100%; height: 100%; object-fit: cover; border-radius: inherit; }
+.cima-patient-form .form-error { margin-bottom: 16px; padding: 12px; border: 1px solid var(--danger); border-radius: 10px; color: var(--danger); font-size: 13px; }
+.cima-patient-form button:disabled { opacity: .6; cursor: wait; }
+.cima-patient-form .radio-option input:focus-visible + label { outline: 2px solid var(--primary); outline-offset: 3px; }
+.cima-patient-form .modal-body::-webkit-scrollbar { width: 6px; }
+.cima-patient-form .modal-body::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }

@@ -1,0 +1,26 @@
+/* Local styles from module parammetre.html, scoped so the app navigation is unchanged. */
+.cima-settings { color-scheme: light; font-family: 'CimaInter', Inter, Arial, sans-serif; background: #f1f5f9; color: #1e293b; min-height: calc(100vh - 8rem); }
+.cima-settings .settings-nav-item { transition: all .2s ease; border-left: 3px solid transparent; }
+.cima-settings .settings-nav-item:hover { background-color: #f8fafc; border-left-color: #c7d2fe; }
+.cima-settings .settings-nav-item.active { background-color: #eef2ff; border-left-color: #4f46e5; color: #4f46e5; font-weight: 600; }
+.cima-settings .row-hover:hover { background-color: #f8fafc; }
+.cima-settings .toggle, .cima-settings-dialog .toggle { position: relative; width: 44px; height: 24px; background: #cbd5e1; border-radius: 999px; transition: all .2s ease; cursor: pointer; flex-shrink: 0; border: 0; }
+.cima-settings .toggle::after, .cima-settings-dialog .toggle::after { content: ''; position: absolute; top: 2px; left: 2px; width: 20px; height: 20px; background: white; border-radius: 50%; transition: all .2s ease; box-shadow: 0 1px 3px rgba(0,0,0,.2); }
+.cima-settings .toggle.on, .cima-settings-dialog .toggle.on { background: #4f46e5; }
+.cima-settings .toggle.on::after, .cima-settings-dialog .toggle.on::after { left: 22px; }
+.cima-settings button:disabled, .cima-settings-dialog button:disabled { cursor: not-allowed; opacity: .55; }
+.cima-settings :is(button, input, select, textarea):focus-visible, .cima-settings-dialog :is(button, input, select, textarea):focus-visible { outline: 2px solid #6366f1; outline-offset: 2px; }
+.cima-settings input, .cima-settings select, .cima-settings textarea { color: #334155; }
+.cima-settings :is(input:not([type=radio]):not([type=file]), select, textarea), .cima-settings-dialog :is(input:not([type=radio]):not([type=file]), select, textarea) { border-color: #e2e8f0 !important; border-radius: 8px; background-color: #f8fafc; }
+.cima-settings input[aria-label="Rechercher un paramètre"] { border: 0 !important; background: transparent !important; box-shadow: none !important; }
+.cima-settings .bg-indigo-600, .cima-settings-dialog .bg-indigo-600 { background-color: #4f46e5 !important; }
+.cima-settings .hover\:bg-indigo-700:hover, .cima-settings-dialog .hover\:bg-indigo-700:hover { background-color: #4338ca !important; }
+.cima-settings .text-indigo-600, .cima-settings-dialog .text-indigo-600 { color: #4f46e5 !important; }
+.cima-settings .bg-gradient-to-br { background-image: linear-gradient(to bottom right, #6366f1, #9333ea) !important; }
+.cima-settings-dialog { background: white !important; color: #1e293b !important; color-scheme: light; font-family: 'CimaInter', Inter, Arial, sans-serif; }
+.cima-settings .settings-card-header { flex-wrap: wrap; gap: 12px; }
+.cima-settings .settings-table { min-width: 620px; }
+.cima-settings .settings-table th { white-space: nowrap; }
+.cima-settings .settings-supplement [data-slot=card] { background: white; border-color: #e2e8f0; color: #1e293b; border-radius: 16px; }
+.cima-settings .settings-supplement input, .cima-settings .settings-supplement select { background: #f8fafc; }
+@media (prefers-reduced-motion: reduce) { .cima-settings *, .cima-settings-dialog * { transition: none !important; } }

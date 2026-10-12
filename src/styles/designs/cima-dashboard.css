@@ -1,0 +1,382 @@
+/* Copied from INTERFACE  CIMA/TABLEAU DE BORD.html; scoped to this dashboard. */
+
+.cima-dashboard * { margin:0; padding:0; box-sizing:border-box; font-family:'CimaInter',sans-serif; }
+
+.cima-dashboard {
+  --primary: #0ea5e9;
+  --primary-dark: #0284c7;
+  --secondary: #6366f1;
+  --success: #10b981;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+  --dark: #0f172a;
+  --gray: #64748b;
+  --light: #f1f5f9;
+  --white: #ffffff;
+}
+
+.cima-dashboard {
+  background: #f8fafc;
+  color: var(--dark);
+  min-height: 0;
+  display: block;
+}
+
+/* ============ SIDEBAR ============ */
+
+/* ============ MAIN ============ */
+.cima-dashboard .main {
+  margin-left: 0;
+  padding: 0 32px;
+  width: 100%;
+}
+
+/* ============ HERO ============ */
+.cima-dashboard .hero {
+  background: linear-gradient(135deg, #0ea5e9 0%, #6366f1 100%);
+  border-radius: 20px;
+  padding: 32px;
+  color: white;
+  margin-bottom: 24px;
+  position: relative;
+  overflow: hidden;
+}
+
+.cima-dashboard .hero::before {
+  content:'';
+  position: absolute;
+  top: -50%; right: -10%;
+  width: 400px; height: 400px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 50%;
+}
+
+.cima-dashboard .hero::after {
+  content:'';
+  position: absolute;
+  bottom: -60%; right: 20%;
+  width: 300px; height: 300px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 50%;
+}
+
+.cima-dashboard .hero-content { position: relative; z-index: 1; }
+
+.cima-dashboard .hero h2 { font-size: 26px; font-weight: 700; margin-bottom: 8px; }
+.cima-dashboard .hero p { font-size: 14px; opacity: 0.9; margin-bottom: 20px; max-width: 600px; }
+
+.cima-dashboard .hero-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+
+.cima-dashboard .btn {
+  padding: 12px 22px;
+  border-radius: 10px;
+  border: none;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s;
+  text-decoration: none;
+}
+
+.cima-dashboard .btn-white { background: white; color: var(--primary-dark); }
+.cima-dashboard .btn-white:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,0,0,0.15); }
+
+.cima-dashboard .btn-outline { background: rgba(255,255,255,0.15); color: white; border: 1px solid rgba(255,255,255,0.3); }
+.cima-dashboard .btn-outline:hover { background: rgba(255,255,255,0.25); }
+
+.cima-dashboard .btn-primary { background: var(--primary); color: white; }
+.cima-dashboard .btn-primary:hover { background: var(--primary-dark); }
+
+/* ============ STATS ============ */
+.cima-dashboard .stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 18px;
+  margin-bottom: 28px;
+}
+
+.cima-dashboard .stat-card {
+  background: white;
+  border-radius: 16px;
+  padding: 22px;
+  border: 1px solid #e2e8f0;
+  transition: all 0.3s;
+  position: relative;
+  overflow: hidden;
+}
+
+.cima-dashboard .stat-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.08);
+}
+
+.cima-dashboard .stat-card .icon {
+  width: 48px; height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  margin-bottom: 16px;
+}
+
+.cima-dashboard .stat-card .icon.blue { background: #e0f2fe; color: #0284c7; }
+.cima-dashboard .stat-card .icon.purple { background: #ede9fe; color: #7c3aed; }
+.cima-dashboard .stat-card .icon.green { background: #d1fae5; color: #059669; }
+.cima-dashboard .stat-card .icon.orange { background: #fef3c7; color: #d97706; }
+
+.cima-dashboard .stat-card h3 { font-size: 13px; color: var(--gray); font-weight: 500; margin-bottom: 6px; }
+.cima-dashboard .stat-card .value { font-size: 26px; font-weight: 700; color: var(--dark); margin-bottom: 6px; }
+
+.cima-dashboard .stat-card .trend {
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 600;
+}
+
+.cima-dashboard .trend.up { color: var(--success); }
+.cima-dashboard .trend.down { color: var(--danger); }
+
+/* ============ CONTENT GRID ============ */
+.cima-dashboard .content-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 22px;
+  margin-bottom: 24px;
+}
+
+@media (max-width: 1100px) {
+  .cima-dashboard .content-grid { grid-template-columns: 1fr; }
+}
+
+.cima-dashboard .card {
+  background: white;
+  border-radius: 16px;
+  border: 1px solid #e2e8f0;
+  padding: 24px;
+}
+
+.cima-dashboard .card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.cima-dashboard .card-header h3 { font-size: 16px; font-weight: 700; }
+.cima-dashboard .card-header .link { color: var(--primary); font-size: 13px; font-weight: 600; cursor: pointer; text-decoration: none; }
+
+/* ============ APPOINTMENTS TABLE ============ */
+.cima-dashboard .appointments-table { width: 100%; border-collapse: collapse; }
+
+.cima-dashboard .appointments-table th {
+  text-align: left;
+  font-size: 11px;
+  text-transform: uppercase;
+  color: var(--gray);
+  font-weight: 600;
+  padding: 10px 12px;
+  border-bottom: 1px solid #e2e8f0;
+  letter-spacing: 0.5px;
+}
+
+.cima-dashboard .appointments-table td {
+  padding: 14px 12px;
+  font-size: 13px;
+  border-bottom: 1px solid #f1f5f9;
+  color: #334155;
+}
+
+.cima-dashboard .appointments-table tr:last-child td { border-bottom: none; }
+.cima-dashboard .appointments-table tr:hover td { background: #f8fafc; }
+
+.cima-dashboard .patient-cell { display: flex; align-items: center; gap: 10px; }
+
+.cima-dashboard .avatar {
+  width: 36px; height: 36px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 700;
+  color: white;
+  flex-shrink: 0;
+}
+
+.cima-dashboard .avatar.c1 { background: linear-gradient(135deg,#0ea5e9,#6366f1); }
+.cima-dashboard .avatar.c2 { background: linear-gradient(135deg,#10b981,#059669); }
+.cima-dashboard .avatar.c3 { background: linear-gradient(135deg,#f59e0b,#d97706); }
+.cima-dashboard .avatar.c4 { background: linear-gradient(135deg,#ec4899,#db2777); }
+.cima-dashboard .avatar.c5 { background: linear-gradient(135deg,#8b5cf6,#7c3aed); }
+
+.cima-dashboard .patient-cell .name { font-weight: 600; font-size: 13px; }
+.cima-dashboard .patient-cell .id { font-size: 11px; color: var(--gray); }
+
+.cima-dashboard .status {
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  display: inline-block;
+}
+
+.cima-dashboard .status.waiting { background: #fef3c7; color: #d97706; }
+.cima-dashboard .status.confirmed { background: #d1fae5; color: #059669; }
+.cima-dashboard .status.urgent { background: #fee2e2; color: #dc2626; }
+.cima-dashboard .status.done { background: #e0f2fe; color: #0284c7; }
+
+/* ============ EXAM TYPES ============ */
+.cima-dashboard .exam-list { display: flex; flex-direction: column; gap: 14px; }
+
+.cima-dashboard .exam-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px;
+  border-radius: 12px;
+  background: #f8fafc;
+  transition: all 0.2s;
+  cursor: pointer;
+}
+
+.cima-dashboard .exam-item:hover { background: #e0f2fe; transform: translateX(4px); }
+
+.cima-dashboard .exam-item .icon-box {
+  width: 42px; height: 42px;
+  border-radius: 10px;
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--primary);
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.cima-dashboard .exam-item .info { flex: 1; }
+.cima-dashboard .exam-item .info p:first-child { font-size: 13px; font-weight: 600; }
+.cima-dashboard .exam-item .info p:last-child { font-size: 11px; color: var(--gray); }
+.cima-dashboard .exam-item .count {
+  background: var(--primary);
+  color: white;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 20px;
+}
+
+/* ============ MACHINE STATUS ============ */
+.cima-dashboard .machine-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
+
+.cima-dashboard .machine-card {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 18px;
+  transition: all 0.2s;
+}
+
+.cima-dashboard .machine-card:hover { box-shadow: 0 8px 20px rgba(0,0,0,0.06); }
+
+.cima-dashboard .machine-head { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 14px; }
+
+.cima-dashboard .machine-head .m-icon {
+  width: 40px; height: 40px;
+  border-radius: 10px;
+  background: #e0f2fe;
+  color: var(--primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 17px;
+}
+
+.cima-dashboard .machine-head .indicator {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  box-shadow: 0 0 0 3px rgba(16,185,129,0.2);
+  background: var(--success);
+}
+
+.cima-dashboard .machine-head .indicator.busy { background: var(--warning); box-shadow: 0 0 0 3px rgba(245,158,11,0.2); }
+.cima-dashboard .machine-head .indicator.off { background: var(--danger); box-shadow: 0 0 0 3px rgba(239,68,68,0.2); }
+
+.cima-dashboard .machine-card h4 { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+.cima-dashboard .machine-card .room { font-size: 12px; color: var(--gray); margin-bottom: 12px; }
+
+.cima-dashboard .progress-bar {
+  height: 6px;
+  background: #f1f5f9;
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.cima-dashboard .progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--primary), var(--secondary));
+  border-radius: 10px;
+  transition: width 0.5s;
+}
+
+.cima-dashboard .machine-card .usage { font-size: 11px; color: var(--gray); display: flex; justify-content: space-between; }
+
+/* ============ QUEUE PANEL ============ */
+.cima-dashboard .queue-list { display: flex; flex-direction: column; gap: 10px; max-height: 340px; overflow-y: auto; }
+
+.cima-dashboard .queue-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid #f1f5f9;
+  transition: all 0.2s;
+}
+
+.cima-dashboard .queue-item:hover { border-color: var(--primary); background: #f0f9ff; }
+
+.cima-dashboard .queue-num {
+  width: 32px; height: 32px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  color: white;
+  font-weight: 700;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.cima-dashboard .queue-item .info { flex: 1; }
+.cima-dashboard .queue-item .info p:first-child { font-size: 13px; font-weight: 600; }
+.cima-dashboard .queue-item .info p:last-child { font-size: 11px; color: var(--gray); }
+.cima-dashboard .queue-item .time { font-size: 11px; color: var(--primary); font-weight: 600; }
+
+/* ============ SCROLLBAR ============ */
+.cima-dashboard ::-webkit-scrollbar { width: 6px; }
+.cima-dashboard ::-webkit-scrollbar-track { background: transparent; }
+.cima-dashboard ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+.cima-dashboard ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
+
+/* ============ RESPONSIVE ============ */
+@media (max-width: 768px) {
+  .cima-dashboard .main { margin-left: 0; width: 100%; padding: 0 16px; }
+  .cima-dashboard .hero { padding: 24px; }
+  .cima-dashboard .hero h2 { font-size: 20px; }
+}
+
+/* Animation */
+@keyframes cima-fade-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.cima-dashboard .card, .cima-dashboard .stat-card, .cima-dashboard .hero { animation: cima-fade-in 0.5s ease; }

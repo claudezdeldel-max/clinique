@@ -1,0 +1,20 @@
+node_modules
+dist
+.git
+.github
+.env*
+scratch
+test-results
+rendered
+docs
+nextjs-version
+vite-version
+INTERFACE  CIMA
+server/uploads
+**/*.db
+**/*.db-*
+**/*.sqlite*
+**/*-backups
+*.docx
+*.pdf
+*.log

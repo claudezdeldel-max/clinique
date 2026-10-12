@@ -1,0 +1,471 @@
+/* Table rules copied verbatim from INTERFACE  CIMA/GSTION DES PATIENTS.html; selectors scoped to this table. */
+.cima-patients-table {
+  --primary: #0ea5e9;
+  --primary-dark: #0284c7;
+  --secondary: #6366f1;
+  --success: #10b981;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+  --purple: #8b5cf6;
+  --pink: #ec4899;
+
+  --bg: #f8fafc;
+  --bg-card: #ffffff;
+  --bg-card-2: #f8fafc;
+  --bg-hover: #f1f5f9;
+  --text: #0f172a;
+  --text-2: #334155;
+  --text-muted: #64748b;
+  --border: #e2e8f0;
+  --border-2: #f1f5f9;
+  --shadow: 0 4px 20px rgba(0,0,0,0.04);
+  --shadow-lg: 0 12px 30px rgba(0,0,0,0.08);
+  --overlay: rgba(15,23,42,0.6);
+
+font-family: 'CimaInter', Inter, sans-serif;
+color: var(--text);
+line-height: normal;
+}
+.dark .cima-patients-table {
+  --bg: #0a0f1c;
+  --bg-card: #131c2f;
+  --bg-card-2: #1a2540;
+  --bg-hover: #1e2a45;
+  --text: #f1f5f9;
+  --text-2: #cbd5e1;
+  --text-muted: #94a3b8;
+  --border: #1e293b;
+  --border-2: #243043;
+  --shadow: 0 4px 20px rgba(0,0,0,0.3);
+  --shadow-lg: 0 12px 30px rgba(0,0,0,0.5);
+  --overlay: rgba(0,0,0,0.75);
+
+}
+.cima-patients-table, .cima-patients-table * { margin: 0; padding: 0; box-sizing: border-box; }
+.cima-patients-table .table-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  overflow: hidden;
+}
+
+/* ============ TABLE CARD ============ */
+.cima-patients-table .table-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  overflow: hidden;
+}
+
+/* ============ TOOLBAR ============ */
+.cima-patients-table .table-toolbar {
+  padding: 18px 22px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  background: var(--bg-card-2);
+}
+
+.cima-patients-table .toolbar-left {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex: 1;
+  min-width: 240px;
+  flex-wrap: wrap;
+}
+
+.cima-patients-table .toolbar-right {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.cima-patients-table .search-box {
+  position: relative;
+  flex: 1;
+  max-width: 340px;
+  min-width: 200px;
+}
+
+.cima-patients-table .search-box input {
+  width: 100%;
+  padding: 10px 14px 10px 40px;
+  border: 1px solid var(--border);
+  border-radius: 11px;
+  background: var(--bg-card);
+  color: var(--text);
+  font-size: 13px;
+  font-family: inherit;
+  transition: all 0.2s;
+}
+
+.cima-patients-table .search-box input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 4px rgba(14,165,233,0.1);
+}
+
+.cima-patients-table .search-box i {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+  font-size: 13px;
+}
+
+.cima-patients-table .filter-select {
+  padding: 10px 32px 10px 14px;
+  border: 1px solid var(--border);
+  border-radius: 11px;
+  background: var(--bg-card);
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 13px;
+  font-family: inherit;
+  transition: all 0.2s;
+}
+
+.cima-patients-table .filter-select:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 4px rgba(14,165,233,0.1);
+}
+
+.cima-patients-table .toolbar-info {
+  font-size: 12px;
+  color: var(--text-muted);
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.cima-patients-table .toolbar-info strong { color: var(--primary); font-weight: 700; }
+
+/* ============ TABLE ============ */
+.cima-patients-table .table-wrapper {
+  overflow-x: auto;
+}
+
+.cima-patients-table table.patients-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 1000px;
+}
+
+.cima-patients-table table.patients-table thead th {
+  text-align: left;
+  font-size: 11px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  font-weight: 700;
+  padding: 14px 16px;
+  background: var(--bg-card-2);
+  border-bottom: 1px solid var(--border);
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+  position: sticky;
+  top: 0;
+}
+
+.cima-patients-table table.patients-table thead th.sortable {
+  cursor: pointer;
+  user-select: none;
+  transition: color 0.2s;
+}
+
+.cima-patients-table table.patients-table thead th.sortable:hover { color: var(--primary); }
+
+.cima-patients-table table.patients-table thead th i.sort-icon {
+  margin-left: 6px;
+  font-size: 10px;
+  opacity: 0.4;
+  transition: all 0.2s;
+}
+
+.cima-patients-table table.patients-table thead th.sortable:hover i.sort-icon { opacity: 1; }
+.cima-patients-table table.patients-table thead th.sorted i.sort-icon { opacity: 1; color: var(--primary); }
+
+.cima-patients-table table.patients-table tbody tr {
+  transition: background 0.15s;
+  border-bottom: 1px solid var(--border-2);
+}
+
+.cima-patients-table table.patients-table tbody tr:last-child { border-bottom: none; }
+.cima-patients-table table.patients-table tbody tr:hover { background: var(--bg-hover); }
+
+.cima-patients-table table.patients-table tbody td {
+  padding: 14px 16px;
+  font-size: 13px;
+  color: var(--text-2);
+  vertical-align: middle;
+}
+
+/* Checkbox column */
+.cima-patients-table .checkbox-cell {
+  width: 40px;
+  padding-left: 18px !important;
+  padding-right: 0 !important;
+}
+
+.cima-patients-table .checkbox-cell input[type="checkbox"] {
+  width: 17px;
+  height: 17px;
+  accent-color: var(--primary);
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+/* Patient cell */
+.cima-patients-table .patient-cell {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.cima-patients-table .avatar {
+  width: 40px; height: 40px;
+  border-radius: 11px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 700;
+  color: white;
+  flex-shrink: 0;
+  position: relative;
+}
+
+.cima-patients-table .avatar.c1 { background: linear-gradient(135deg,#0ea5e9,#6366f1); }
+.cima-patients-table .avatar.c2 { background: linear-gradient(135deg,#10b981,#059669); }
+.cima-patients-table .avatar.c3 { background: linear-gradient(135deg,#f59e0b,#d97706); }
+.cima-patients-table .avatar.c4 { background: linear-gradient(135deg,#ec4899,#db2777); }
+.cima-patients-table .avatar.c5 { background: linear-gradient(135deg,#8b5cf6,#7c3aed); }
+.cima-patients-table .avatar.c6 { background: linear-gradient(135deg,#06b6d4,#0891b2); }
+
+.cima-patients-table .avatar .status-dot {
+  position: absolute;
+  bottom: -2px; right: -2px;
+  width: 12px; height: 12px;
+  border-radius: 50%;
+  background: var(--success);
+  border: 2px solid var(--bg-card);
+}
+
+.cima-patients-table .avatar .status-dot.off { background: var(--text-muted); }
+.cima-patients-table .avatar .status-dot.busy { background: var(--warning); }
+
+.cima-patients-table .patient-cell .info { min-width: 0; }
+.cima-patients-table .patient-cell .name {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 2px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.cima-patients-table .patient-cell .id {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+/* Info cell simple */
+.cima-patients-table .info-cell p:first-child {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 2px;
+}
+
+.cima-patients-table .info-cell p:last-child {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+/* Badges */
+.cima-patients-table .badge {
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+}
+
+.cima-patients-table .badge.blood { background: rgba(239,68,68,0.15); color: var(--danger); }
+.cima-patients-table .badge.blue { background: rgba(14,165,233,0.15); color: var(--primary); }
+.cima-patients-table .badge.green { background: rgba(16,185,129,0.15); color: var(--success); }
+.cima-patients-table .badge.orange { background: rgba(245,158,11,0.15); color: var(--warning); }
+.cima-patients-table .badge.purple { background: rgba(139,92,246,0.15); color: var(--purple); }
+.cima-patients-table .badge.gray { background: var(--bg-hover); color: var(--text-muted); }
+
+/* Status pill */
+.cima-patients-table .status-pill {
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  white-space: nowrap;
+}
+
+.cima-patients-table .status-pill::before {
+  content: '';
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.cima-patients-table .status-pill.active { background: rgba(16,185,129,0.15); color: var(--success); }
+.cima-patients-table .status-pill.waiting { background: rgba(245,158,11,0.15); color: var(--warning); }
+.cima-patients-table .status-pill.inactive { background: rgba(100,116,139,0.15); color: var(--text-muted); }
+
+/* Action buttons */
+.cima-patients-table .row-actions {
+  display: flex;
+  gap: 4px;
+  justify-content: flex-end;
+}
+
+.cima-patients-table .action-btn {
+  width: 32px; height: 32px;
+  border-radius: 8px;
+  background: transparent;
+  border: 1px solid transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--text-muted);
+  transition: all 0.2s;
+  font-size: 12px;
+}
+
+.cima-patients-table .action-btn:hover {
+  background: var(--bg-hover);
+  border-color: var(--border);
+  color: var(--primary);
+}
+
+.cima-patients-table .action-btn.view:hover { background: rgba(14,165,233,0.1); border-color: rgba(14,165,233,0.3); color: var(--primary); }
+.cima-patients-table .action-btn.edit:hover { background: rgba(139,92,246,0.1); border-color: rgba(139,92,246,0.3); color: var(--purple); }
+.cima-patients-table .action-btn.calendar:hover { background: rgba(16,185,129,0.1); border-color: rgba(16,185,129,0.3); color: var(--success); }
+.cima-patients-table .action-btn.delete:hover { background: rgba(239,68,68,0.1); border-color: rgba(239,68,68,0.3); color: var(--danger); }
+
+/* ============ PAGINATION ============ */
+.cima-patients-table .pagination {
+  padding: 16px 22px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 14px;
+  border-top: 1px solid var(--border);
+  background: var(--bg-card-2);
+  flex-wrap: wrap;
+}
+
+.cima-patients-table .pagination-info {
+  font-size: 12px;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.cima-patients-table .pagination-info strong { color: var(--text); font-weight: 700; }
+
+.cima-patients-table .pagination-controls {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.cima-patients-table .page-btn {
+  min-width: 34px;
+  height: 34px;
+  padding: 0 10px;
+  border-radius: 9px;
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  color: var(--text-2);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  font-family: inherit;
+}
+
+.cima-patients-table .page-btn:hover:not(:disabled) {
+  border-color: var(--primary);
+  color: var(--primary);
+  background: var(--bg-hover);
+}
+
+.cima-patients-table .page-btn.active {
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  color: white;
+  border-color: transparent;
+  box-shadow: 0 4px 12px rgba(14,165,233,0.3);
+}
+
+.cima-patients-table .page-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.cima-patients-table .page-size-select {
+  padding: 8px 28px 8px 12px;
+  border-radius: 9px;
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  color: var(--text);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  background-size: 12px;
+  font-family: inherit;
+}
+
+.cima-patients-table .empty-row {
+  text-align: center;
+  padding: 60px 20px;
+}
+
+.cima-patients-table .empty-row i {
+  font-size: 44px;
+  color: var(--text-muted);
+  opacity: 0.3;
+  margin-bottom: 14px;
+  display: block;
+}
+
+.cima-patients-table .empty-row p {
+  font-size: 14px;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+
+@media (max-width: 1024px) { .cima-patients-table .pagination { flex-direction: column; } }

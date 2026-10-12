@@ -1,0 +1,30 @@
+[
+  {
+    "id": "maintenance",
+    "name": "Maintenance IRM / CT (Équipements)",
+    "color": "bg-red-500",
+    "visible": true,
+    "type": "maintenance"
+  },
+  {
+    "id": "gardes",
+    "name": "Gardes & Astreintes Médicales",
+    "color": "bg-blue-500",
+    "visible": true,
+    "type": "gardes"
+  },
+  {
+    "id": "staff",
+    "name": "Staffs Inter-Hospitaliers & Réunions",
+    "color": "bg-purple-500",
+    "visible": true,
+    "type": "staff"
+  },
+  {
+    "id": "disponibilite",
+    "name": "Disponibilité des Salles d'Examen",
+    "color": "bg-emerald-500",
+    "visible": true,
+    "type": "disponibilite"
+  }
+]

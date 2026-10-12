@@ -1,0 +1,62 @@
+[
+  {
+    "id": 1,
+    "title": "Maintenance Préventive IRM 3T Siemens",
+    "date": "10T08:00:00.000Z",
+    "time": "08:00 AM",
+    "duration": "2 heures",
+    "type": "event",
+    "attendees": ["ML", "Tech Siemens"],
+    "location": "Salle IRM 1",
+    "color": "bg-red-500",
+    "description": "Contrôle annuel de la bobine de gradient et recharge Hélium liquide."
+  },
+  {
+    "id": 2,
+    "title": "Garde de Nuit - Urgences Radiologiques",
+    "date": "12T20:00:00.000Z",
+    "time": "08:00 PM",
+    "duration": "12 heures",
+    "type": "meeting",
+    "attendees": ["Dr. Karim Benali"],
+    "location": "Clinique RadioMed",
+    "color": "bg-blue-500",
+    "description": "Astreinte télé-radiologie et urgences Scanner CT 128 coupes."
+  },
+  {
+    "id": 3,
+    "title": "Staff Médical - Dossiers Oncologiques",
+    "date": "15T14:00:00.000Z",
+    "time": "02:00 PM",
+    "duration": "1.5 heure",
+    "type": "meeting",
+    "attendees": ["Prof. Laurent", "Dr. Martin", "Dr. Delacroix"],
+    "location": "Salle de Conférence B",
+    "color": "bg-purple-500",
+    "description": "Revue des comptes-rendus d'imagerie complexes et concertation pluridisciplinaire."
+  },
+  {
+    "id": 4,
+    "title": "Calibration Capteurs Échographie Doppler",
+    "date": "18T11:00:00.000Z",
+    "time": "11:00 AM",
+    "duration": "1 heure",
+    "type": "event",
+    "attendees": ["Dr. Sophie Martin", "Biomédical"],
+    "location": "Salle Écho 3",
+    "color": "bg-emerald-500",
+    "description": "Mise à jour firmware sondes vasculaires et test de résolution d'image."
+  },
+  {
+    "id": 5,
+    "title": "Contrôle Radioprotection & Normes ASN",
+    "date": "22T09:00:00.000Z",
+    "time": "09:00 AM",
+    "duration": "3 heures",
+    "type": "reminder",
+    "attendees": ["Inspecteur ASN", "Cadre de Santé"],
+    "location": "Salle Radio Numérique X",
+    "color": "bg-orange-500",
+    "description": "Audite annuel de dosimétrie et conformité des tabliers de plomb."
+  }
+]

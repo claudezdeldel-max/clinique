@@ -1,0 +1,35 @@
+/* Functional additions; the reference layout lives in cima-dashboard.css. */
+.cima-dashboard { isolation: isolate; line-height: normal; }
+.cima-dashboard .fas { font-family: 'Font Awesome 6 Free'; font-weight: 900; }
+.cima-dashboard a { text-decoration: none; }
+.cima-dashboard button:disabled { cursor: not-allowed; opacity: 0.65; }
+.cima-dashboard button:disabled:hover { transform: none; box-shadow: none; }
+.cima-dashboard button.link { background: transparent; border: 0; }
+.cima-dashboard .main { min-width: 0; }
+.cima-dashboard .content-grid > * { min-width: 0; }
+.cima-dashboard .patient-cell { color: inherit; }
+.cima-dashboard .patient-cell:hover .name { color: var(--primary); }
+.cima-dashboard .queue-item { color: var(--dark); }
+.cima-dashboard .queue-item .info { min-width: 0; }
+.cima-dashboard .queue-item .info p { overflow-wrap: anywhere; }
+.cima-dashboard .queue-num { width: 32px; }
+.cima-dashboard .time { white-space: nowrap; }
+.cima-dashboard .cima-equipment { margin-bottom: 24px; }
+.cima-dashboard .cima-empty { padding: 24px 12px; font-size: 13px; color: var(--gray); text-align: center; }
+.cima-dashboard .cima-sync { margin-bottom: 12px; color: var(--gray); font-size: 13px; }
+.cima-dashboard .cima-error { background: #fff7ed; border: 1px solid #fed7aa; color: #9a3412; padding: 12px; border-radius: 12px; margin-bottom: 16px; font-size: 13px; }
+.cima-dashboard .cima-error button { margin-left: 12px; text-decoration: underline; cursor: pointer; font-weight: 600; }
+.cima-dashboard .cima-table-scroll { overflow-x: auto; }
+.cima-dashboard .appointments-table { min-width: 510px; }
+.cima-dashboard #cima-statistiques { scroll-margin-top: 24px; }
+.cima-dashboard :is(button, a, input):focus-visible { outline: 2px solid #0ea5e9; outline-offset: 3px; }
+@media (max-width: 768px) {
+  .cima-dashboard .stats-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+  .cima-dashboard .stat-card { padding: 16px; }
+  .cima-dashboard .card { padding: 16px; }
+  .cima-dashboard .machine-grid { grid-template-columns: 1fr; }
+  .cima-dashboard .main { padding: 0 16px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cima-dashboard *, .cima-dashboard *::before, .cima-dashboard *::after { animation: none !important; transition: none !important; }
+}

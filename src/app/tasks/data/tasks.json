@@ -1,0 +1,16 @@
+[
+  {
+    "id": "PAT-001",
+    "title": "Jean Dupont - IRM Cérébrale 3T (Céphalées persistantes)",
+    "status": "completed",
+    "label": "IRM 3T",
+    "priority": "medium"
+  },
+  {
+    "id": "PAT-002",
+    "title": "Marie Curie - Scanner CT Abdomino-Pelvien (Lithiase biliaire)",
+    "status": "completed",
+    "label": "Scanner CT",
+    "priority": "low"
+  }
+]

@@ -1,0 +1,26 @@
+[
+  {
+    "id": 1,
+    "name": "Prof. Marc Laurent",
+    "email": "m.laurent@radiomed.fr",
+    "avatar": "ML",
+    "role": "Chef de Service Radiologie",
+    "plan": "IRM 3T & Neuroradiologie",
+    "billing": "Garde Vingt-Quatreh",
+    "status": "Active",
+    "joinedDate": "2024-01-15",
+    "lastLogin": "2026-09-01"
+  },
+  {
+    "id": 2,
+    "name": "Dr. Sophie Martin",
+    "email": "s.martin@radiomed.fr",
+    "avatar": "SM",
+    "role": "Médecin Radiologue",
+    "plan": "Échographie Doppler & Vasculaire",
+    "billing": "Temps Plein",
+    "status": "Active",
+    "joinedDate": "2024-02-20",
+    "lastLogin": "2026-09-01"
+  }
+]

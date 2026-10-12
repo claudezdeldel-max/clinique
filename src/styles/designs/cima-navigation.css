@@ -1,0 +1,44 @@
+/* Sidebar markup and active-link rules copied from Finance et compatbilite.html.
+   Freeze the reference's Tailwind 3 colors so app themes/Tailwind 4 cannot alter them. */
+html[data-design="mediscan"] body [data-slot="sidebar"],
+html[data-design="mediscan"] body [data-sidebar="sidebar"],
+html[data-design="mediscan"].dark body [data-slot="sidebar"],
+html[data-design="mediscan"].dark body [data-sidebar="sidebar"] {
+  background: #0f172a !important;
+  color: #cbd5e1 !important;
+  border-color: #1e293b !important;
+  font-family: 'CimaInter', Inter, sans-serif;
+}
+html[data-design="mediscan"] [data-slot="sidebar"][data-mobile="true"] {
+  --sidebar-width: 16rem !important;
+}
+html[data-design="mediscan"] .cima-navigation {
+  border: 0;
+}
+html[data-design="mediscan"] [data-sidebar="sidebar"] .sidebar-link.active {
+  background: linear-gradient(90deg, #4f46e5 0%, #6366f1 100%);
+  color: white;
+  box-shadow: 0 4px 12px rgba(79,70,229,.35);
+}
+html[data-design="mediscan"] [data-sidebar="sidebar"] .sidebar-link.active .icon { color: white; }
+html[data-design="mediscan"] [data-sidebar="sidebar"] .sidebar-link { flex-shrink: 0; line-height: 20px; }
+html[data-design="mediscan"] [data-sidebar="sidebar"] .sidebar-link svg { flex-shrink: 0; }
+html[data-design="mediscan"] [data-sidebar="sidebar"] .navigation-count {
+  background: rgba(99, 102, 241, .2);
+  color: #c7d2fe;
+}
+html[data-design="mediscan"] [data-sidebar="sidebar"] .sidebar-link.active .navigation-count {
+  background: rgba(255, 255, 255, .2);
+  color: #fff;
+}
+html[data-design="mediscan"] [data-sidebar="sidebar"] .text-slate-400 { color: #94a3b8; }
+html[data-design="mediscan"] [data-sidebar="sidebar"] .text-slate-500 { color: #64748b; }
+html[data-design="mediscan"] [data-sidebar="sidebar"] .text-white { color: #fff; }
+html[data-design="mediscan"] [data-sidebar="sidebar"] .border-slate-800 { border-color: #1e293b; }
+html[data-design="mediscan"] [data-sidebar="sidebar"] .bg-slate-800\/50 { background: rgba(30,41,59,.5); }
+html[data-design="mediscan"] [data-sidebar="sidebar"] .hover\:bg-slate-800:hover { background: #1e293b; }
+html[data-design="mediscan"] [data-sidebar="sidebar"] .bg-gradient-to-br { background: linear-gradient(to bottom right, #6366f1, #9333ea); }
+html[data-design="mediscan"] [data-sidebar="sidebar"] .ring-indigo-500\/50 { --tw-ring-color: rgba(99,102,241,.5); }
+html[data-design="mediscan"] [data-sidebar="sidebar"] > .h-16 { flex-shrink: 0; }
+html[data-design="mediscan"] [data-sidebar="sidebar"] nav { min-height: 0; }
+html[data-design="mediscan"] [data-sidebar="sidebar"] :is(a, button):focus-visible { outline: 2px solid #6366f1; outline-offset: 2px; }
