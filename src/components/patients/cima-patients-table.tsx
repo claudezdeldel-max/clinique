@@ -83,7 +83,7 @@ export function CimaPatientsTable({ patients, selectedIds, onSelectOne, onOpenDo
     <link rel="stylesheet" href={`${import.meta.env.BASE_URL}cima/fontawesome.css`} />
     <div className="table-card">
       <div className="table-wrapper">
-        <table className="patients-table" id="patientsTable" aria-label="Registre des patients">
+        <table className="patients-table" id="patientsTable" aria-label="Gestion des patients">
           <thead>
             <tr>
               <th className="checkbox-cell">

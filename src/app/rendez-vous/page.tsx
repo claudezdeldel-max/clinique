@@ -32,11 +32,11 @@ import {
   updateAppointment,
   deleteAppointment,
   markAppointmentArrived,
-  getPatients,
 } from '@/lib/api'
 import { useClinicResources } from '@/hooks/use-clinic-resources'
 import { examCategory } from '@/stores/account-store'
 import { toast } from 'sonner'
+import { PatientPicker } from '@/components/patients/patient-picker'
 import { ReferenceCalendar } from './reference-calendar'
 import { dateOf, weekStart, shiftDate, navigateReferenceDate, referenceStatus, type RdvView } from './rdv-reference'
 
@@ -121,23 +121,8 @@ export default function RendezVousPage() {
 
   // Patient search state for modal
   const [patientSearchMode, setPatientSearchMode] = useState<'existing' | 'new'>('existing')
-  const [existingPatients, setExistingPatients] = useState<any[]>([])
-  const [patientSearchQuery, setPatientSearchQuery] = useState('')
-  const [showPatientDropdown, setShowPatientDropdown] = useState(false)
-
-  const fetchExistingPatients = async () => {
-    try {
-      const res = await getPatients({ page_size: 100 })
-      setExistingPatients(res.items || [])
-    } catch (err) {
-      toast.error((err as Error).message)
-    }
-  }
-
   const handleOpenCreateModal = () => {
     setEditingAppt(null)
-    setPatientSearchQuery('')
-    setShowPatientDropdown(false)
     setPatientSearchMode('existing')
     setNewAppt({
       appt_date: selectedDate || new Date().toISOString().split('T')[0],
@@ -153,7 +138,6 @@ export default function RendezVousPage() {
       notes: '',
     })
     setModalOpen(true)
-    fetchExistingPatients()
   }
 
   useEffect(() => {
@@ -169,8 +153,6 @@ export default function RendezVousPage() {
   const handleOpenEditModal = (appt: any) => {
     setEditingAppt(appt)
     const rawDate = (appt.date_time || '').split(' ')[0].split('T')[0] || selectedDate
-    setPatientSearchQuery(appt.patient_name || '')
-    setShowPatientDropdown(false)
     setPatientSearchMode('existing')
     setNewAppt({
       appt_date: rawDate,
@@ -186,7 +168,6 @@ export default function RendezVousPage() {
       notes: appt.notes || '',
     })
     setModalOpen(true)
-    fetchExistingPatients()
   }
 
   const handleDeleteAppointment = (id: number) => {
@@ -204,16 +185,6 @@ export default function RendezVousPage() {
       setDeleteTargetId(null)
     }
   }
-
-  const filteredPatients = existingPatients.filter((p) => {
-    if (!patientSearchQuery.trim()) return true
-    const q = patientSearchQuery.toLowerCase()
-    return (
-      p.name?.toLowerCase().includes(q) ||
-      p.phone?.toLowerCase().includes(q) || (q.replace(/\D/g, '').length > 0 && p.phone?.replace(/\D/g, '').includes(q.replace(/\D/g, ''))) ||
-      p.social_sec_no?.toLowerCase().includes(q)
-    )
-  })
 
   // Computed filtered appointments for list display
   const filteredAppointments = appointments.filter((appt) => {
@@ -260,10 +231,9 @@ export default function RendezVousPage() {
 
   const handleSaveAppointment = async () => {
     if (submitting) return
-    setShowPatientDropdown(false)
     if (patientSearchMode === 'existing' && !newAppt.patient_id) { toast.error('Sélectionnez le patient dans la liste ou choisissez « Nouveau patient ».'); return }
     if (!newAppt.room) { toast.error('Choisissez une salle disponible pour cet examen.'); return }
-    const finalPatientName = newAppt.patient_name.trim() || patientSearchQuery.trim()
+    const finalPatientName = newAppt.patient_name.trim()
     if (!finalPatientName) { toast.error('Le nom du patient est obligatoire.'); return }
     if (newAppt.patient_birth_date && calculateAge(newAppt.patient_birth_date) === null) { toast.error('Date de naissance invalide.'); return }
     setSubmitting(true)
@@ -288,8 +258,7 @@ export default function RendezVousPage() {
         setAppointments(prev => [created, ...prev])
       }
       setModalOpen(false)
-      setShowPatientDropdown(false)
-      fetchAppointments()
+        fetchAppointments()
     } catch (err) {
       toast.error((err as Error).message)
     } finally {
@@ -577,97 +546,24 @@ export default function RendezVousPage() {
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
         <DialogContent className="sm:max-w-[580px]">
           <DialogHeader>
-            <DialogTitle>{editingAppt ? 'Modification du Rendez-Vous' : 'Prise de Rendez-Vous Examen'}</DialogTitle>
-            <DialogDescription>
-              {editingAppt
-                ? 'Modifiez les détails du rendez-vous puis validez pour enregistrer.'
-                : 'Sélectionnez un patient existant ou créez un nouveau dossier pour planifier l\'examen.'}
-            </DialogDescription>
+            <DialogTitle>{editingAppt ? 'Modifier le rendez-vous' : 'Nouveau rendez-vous'}</DialogTitle>
+            <DialogDescription className="sr-only">Patient et créneau du rendez-vous.</DialogDescription>
           </DialogHeader>
 
           <div className="space-y-4 py-2">
-            {/* Patient Mode Toggle */}
-            <div className="flex p-1 bg-muted rounded-lg text-xs">
-              <button
-                type="button"
-                onClick={() => setPatientSearchMode('existing')}
-                className={`flex-1 py-1.5 rounded-md font-bold transition-all ${
-                  patientSearchMode === 'existing' ? 'bg-background shadow-xs text-foreground' : 'text-muted-foreground'
-                }`}
-              >
-                🔍 Patient Existant (Recherche)
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  setPatientSearchMode('new')
-                  setNewAppt((prev) => ({ ...prev, patient_name: '', patient_phone: '',
-    patient_birth_date: '', patient_id: null as any }))
-                }}
-                className={`flex-1 py-1.5 rounded-md font-bold transition-all ${
-                  patientSearchMode === 'new' ? 'bg-background shadow-xs text-foreground' : 'text-muted-foreground'
-                }`}
-              >
-                ➕ Nouveau Patient
-              </button>
-            </div>
-
-            {/* Patient Search Autocomplete (Existing Patient Mode) */}
             {patientSearchMode === 'existing' ? (
-              <div className="space-y-1.5 relative">
-                <Label htmlFor="patient_search">Rechercher Patient (Nom, Téléphone, Secu) *</Label>
-                <div className="relative">
-                  <Input
-                    id="patient_search"
-                    data-testid="appt-patient-name"
-                    placeholder="Tapez un nom (ex: Amine Benali, Sarah...)"
-                    value={newAppt.patient_name || patientSearchQuery}
-                    onChange={(e) => {
-                      const val = e.target.value
-                      setPatientSearchQuery(val)
-                      setNewAppt((prev) => ({ ...prev, patient_name: val, patient_id: null, patient_phone: '', patient_birth_date: '' }))
-                      setShowPatientDropdown(true)
-                    }}
-                    readOnly={!!editingAppt} onFocus={() => { if (!editingAppt) setShowPatientDropdown(true) }}
-                  />
-                </div>
-
-                {/* Autocomplete Dropdown List */}
-                {showPatientDropdown && filteredPatients.length > 0 && (
-                  <div className="absolute z-50 left-0 right-0 top-full mt-1 max-h-48 overflow-y-auto bg-popover border rounded-lg shadow-lg divide-y">
-                    {filteredPatients.map((p) => (
-                      <div
-                        key={p.id}
-                        onClick={() => {
-                          setNewAppt((prev) => ({
-                            ...prev,
-                            patient_id: p.id,
-                            patient_name: p.name,
-                            patient_phone: p.phone || '',
-                            patient_birth_date: p.birth_date || '',
-                          }))
-                          setPatientSearchQuery(p.name)
-                          setShowPatientDropdown(false)
-                        }}
-                        className="p-2.5 hover:bg-muted/60 cursor-pointer flex items-center justify-between text-xs"
-                      >
-                        <div>
-                          <span className="font-bold text-foreground block">{p.name}</span>
-                          <span className="text-[10px] text-muted-foreground">Tél: {formatPhoneNumber(p.phone) || 'N/A'} • N° Sécu: {p.social_sec_no || 'N/A'}</span>
-                        </div>
-                        <span className="text-[10px] font-semibold text-primary bg-primary/10 px-2 py-0.5 rounded">
-                          Sélectionner
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                )}
+              <div className="space-y-1.5">
+                <Label>Patient *</Label>
+                <PatientPicker value={newAppt.patient_id ? { id: newAppt.patient_id, name: newAppt.patient_name } : null} disabled={!!editingAppt}
+                  onChange={patient => setNewAppt(previous => ({ ...previous, patient_id: patient?.id || null, patient_name: patient?.name || '', patient_phone: patient?.phone || '', patient_birth_date: patient?.birth_date || '' }))}
+                  onNew={() => { setPatientSearchMode('new'); setNewAppt(previous => ({ ...previous, patient_id: null, patient_name: '', patient_phone: '', patient_birth_date: '' })) }} />
               </div>
             ) : (
               /* New Patient Inputs */
               <div className="space-y-3">
+                <button type="button" className="text-xs text-primary hover:underline" onClick={() => { setPatientSearchMode('existing'); setNewAppt(previous => ({ ...previous, patient_id: null, patient_name: '', patient_phone: '', patient_birth_date: '' })) }}>Rechercher un patient</button>
                 <div className="space-y-1.5">
-                  <Label htmlFor="patient_name">Nom & Prénom du Patient *</Label>
+                  <Label htmlFor="patient_name">Nom et prénom *</Label>
                   <Input
                     id="patient_name"
                     data-testid="appt-patient-name"
@@ -682,7 +578,7 @@ export default function RendezVousPage() {
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-1.5">
-                <Label htmlFor="appt_date_picker">Date du Rendez-Vous *</Label>
+                <Label htmlFor="appt_date_picker">Date *</Label>
                 <Input
                   id="appt_date_picker"
                   type="date"
@@ -704,7 +600,7 @@ export default function RendezVousPage() {
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-1.5">
-                <Label>Priorité Examen</Label>
+                <Label>Priorité</Label>
                 <Select value={newAppt.priority} onValueChange={(val) => setNewAppt((prev) => ({ ...prev, priority: val }))}>
                   <SelectTrigger>
                     <SelectValue placeholder="Priorité" />
@@ -719,7 +615,7 @@ export default function RendezVousPage() {
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-1.5">
-                <Label>Modalité Examen</Label>
+                <Label>Examen</Label>
                 <Select
                   value={newAppt.exam_type}
                   onValueChange={(val) => {
@@ -731,7 +627,7 @@ export default function RendezVousPage() {
                     }))
                   }}
                 >
-                  <SelectTrigger aria-label="Modalité Examen">
+                  <SelectTrigger aria-label="Examen">
                     <SelectValue placeholder="Examen" />
                   </SelectTrigger>
                   <SelectContent>
@@ -745,9 +641,9 @@ export default function RendezVousPage() {
               </div>
 
               <div className="space-y-1.5">
-                <Label>Salle d'Imagerie Concernée</Label>
+                <Label>Salle</Label>
                 <Select value={newAppt.room} onValueChange={(val) => setNewAppt((prev) => ({ ...prev, room: val }))}>
-                  <SelectTrigger aria-label="Salle d'Imagerie Concernée">
+                  <SelectTrigger aria-label="Salle">
                     <SelectValue placeholder="Salle" />
                   </SelectTrigger>
                   <SelectContent>
@@ -762,10 +658,10 @@ export default function RendezVousPage() {
               </div>
             </div>
 
-            <div className="space-y-2"><Label htmlFor="appt-doctor">Médecin radiologue</Label><select id="appt-doctor" className="border rounded-md p-2 bg-background w-full" value={newAppt.radiologist} onChange={e => setNewAppt(prev => ({ ...prev, radiologist: e.target.value }))}><option value="">Non affecté</option>{resources.doctors.map(d => <option key={d.id} value={d.name}>{d.name}</option>)}</select></div>
+            <div className="space-y-2"><Label htmlFor="appt-doctor">Médecin</Label><select id="appt-doctor" className="border rounded-md p-2 bg-background w-full" value={newAppt.radiologist} onChange={e => setNewAppt(prev => ({ ...prev, radiologist: e.target.value }))}><option value="">Non affecté</option>{resources.doctors.map(d => <option key={d.id} value={d.name}>{d.name}</option>)}</select></div>
             {/* Slots selector */}
             <div className="space-y-1.5">
-              <Label>Créneau Horaire Disponible ({slots.length} créneaux)</Label>
+              <Label>Horaire</Label>
               <div className="grid grid-cols-4 gap-2 max-h-36 overflow-y-auto p-2 border rounded-lg bg-muted/20">
                 {slots.map((s) => (
                   <button
@@ -793,7 +689,7 @@ export default function RendezVousPage() {
               Annuler
             </Button>
             <Button type="button" data-testid="appt-submit-btn" onClick={handleSaveAppointment} disabled={submitting}>
-              {submitting ? 'Validation...' : editingAppt ? 'Enregistrer la Modification' : 'Confirmer le Rendez-Vous'}
+              {submitting ? 'Validation...' : editingAppt ? 'Enregistrer' : 'Ajouter'}
             </Button>
           </DialogFooter>
         </DialogContent>

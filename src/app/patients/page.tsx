@@ -144,7 +144,7 @@ export default function PatientsPage() {
 
   return (
 
-    <BaseLayout title="Registre des Patients" description="Gestion administrative et dossiers médicaux des patients de la clinique">
+    <BaseLayout title="Gestion des patients" description="Gestion administrative et dossiers médicaux des patients de la clinique">
       <div className="space-y-6 px-4 md:px-6">
         {/* Top KPIs */}
         <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">

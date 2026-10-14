@@ -54,7 +54,7 @@ test('RDV : tableau conservé, vues copiées, dates réelles et actions synchron
   await page.screenshot({ path: 'scratch/rdv-week-connected.png', fullPage: true })
 
   await firstEvent.click()
-  await expect(page.getByRole('dialog')).toContainText('Modification du Rendez-Vous')
+  await expect(page.getByRole('dialog')).toContainText('Modifier le rendez-vous')
   await page.getByLabel('Téléphone', { exact: true }).fill('0555001122')
   await page.getByTestId('appt-submit-btn').click()
   await expect(page.getByRole('dialog')).toHaveCount(0)
@@ -75,9 +75,9 @@ test('RDV : tableau conservé, vues copiées, dates réelles et actions synchron
   await page.screenshot({ path: 'scratch/rdv-day-connected.png', fullPage: true })
 
   await calendar.locator('.day-slot[data-time="15:00"]').click({ position: { x: 15, y: 15 } })
-  await expect(page.getByRole('dialog')).toContainText('Prise de Rendez-Vous Examen')
+  await expect(page.getByRole('dialog')).toContainText('Nouveau rendez-vous')
   await expect(page.getByTestId('appt-date-input')).toHaveValue('2028-02-29')
-  await page.getByRole('button', { name: /Nouveau Patient/ }).click()
+  await page.getByRole('button', { name: 'Nouveau patient', exact: true }).click()
   await page.getByTestId('appt-patient-name').fill('Patient créé depuis le calendrier')
   await page.getByTestId('appt-submit-btn').click()
   await expect(page.getByRole('dialog')).toHaveCount(0)

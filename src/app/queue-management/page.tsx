@@ -1,3 +1,4 @@
+import { PatientPicker } from '@/components/patients/patient-picker'
 import { BirthDateFields } from '@/components/patients/birth-date-fields'
 "use client";
 
@@ -17,7 +18,7 @@ import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
-import { formatPatientName, calculateAge, formatPhoneNumber } from '@/lib/utils';
+import { formatPatientName, calculateAge } from '@/lib/utils';
 import { toast } from 'sonner';
 import {
   Users,
@@ -34,7 +35,6 @@ import {
   Search,
   Sparkles,
   Tv,
-  UserPlus,
   Phone,
   ShieldCheck,
   Pause,
@@ -85,7 +85,7 @@ export default function QueueManagementPage() {
   const ROOMS = ['Tous les bureaux / Salles', ...Array.from(new Set([...resources.rooms.map(r => r.name), ...queue.map(q => q.room_name)]))];
   const availableRooms = resources.rooms.filter(r => r.status === 'available' || r.status === 'busy').map(r => r.name);
   const RADIOLOGISTS = resources.doctors.map(d => d.name);
-  const { students, addStudent } = useSchoolData();
+  const { addStudent } = useSchoolData();
 
   const [selectedRoom, setSelectedRoom] = useState<string>('Tous les bureaux / Salles');
   const [statusFilter, setStatusFilter] = useState<string>('active');
@@ -99,7 +99,7 @@ export default function QueueManagementPage() {
   const [isTicketModalOpen, setIsTicketModalOpen] = useState<boolean>(false);
 
   // New Ticket Form state
-  const [selectedPatientId, setSelectedPatientId] = useState<string>('');
+  const [selectedPatient, setSelectedPatient] = useState<any | null>(null);
   const [isExpressPatientMode, setIsExpressPatientMode] = useState<boolean>(false);
   const [expressName, setExpressName] = useState<string>('');
   const [expressBirthDate, setExpressBirthDate] = useState<string>('');
@@ -153,18 +153,18 @@ export default function QueueManagementPage() {
 
         finalPatientName = created?.name || formattedExpressName;
         finalPatientId = created?.id;
-        setSelectedPatientId(String(created.id)); setIsExpressPatientMode(false);
+        setSelectedPatient(created); setIsExpressPatientMode(false);
         toast.success(`Nouveau patient ${finalPatientName} enregistré en BDD avec succès !`);
       } catch (err) {
         toast.error("Erreur d'enregistrement du patient express.");
         return;
       }
     } else {
-      if (!selectedPatientId) {
-        toast.error("RÈGLE SÉCURITÉ : Vous devez sélectionner un patient enregistré ou créer un patient express !");
+      if (!selectedPatient?.id) {
+        toast.error("Sélectionnez un patient.");
         return;
       }
-      const existing = students.find(p => p.id.toString() === selectedPatientId);
+      const existing = selectedPatient;
       if (!existing) {
         toast.error("Patient non trouvé dans le système.");
         return;
@@ -186,7 +186,7 @@ export default function QueueManagementPage() {
 
       toast.success(`Ticket ${ticket.ticket_number} émis pour ${ticket.patient_name}`);
       setIsAddModalOpen(false);
-      setSelectedPatientId('');
+      setSelectedPatient(null);
       setExpressName('');
       setExpressBirthDate('');
       setExpressPhone('');
@@ -300,7 +300,7 @@ export default function QueueManagementPage() {
             </Button>
 
             <Button onClick={() => {
-              setSelectedPatientId(''); setExpressName(''); setExpressBirthDate(''); setExpressPhone('');
+              setSelectedPatient(null); setExpressName(''); setExpressBirthDate(''); setExpressPhone('');
               setIsExpressPatientMode(false); setNewNotes(''); setIsAddModalOpen(true);
             }} size="sm" className="gap-2 bg-primary text-primary-foreground font-bold">
               <Plus className="size-4" />
@@ -591,59 +591,22 @@ export default function QueueManagementPage() {
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2 text-lg font-bold text-primary">
                 <Plus className="size-5" />
-                Émission d'un Ticket de File d'Attente
+                Nouveau ticket
               </DialogTitle>
-              <DialogDescription>
-                Seuls les patients enregistrés en base de données peuvent recevoir un ticket.
-              </DialogDescription>
+              <DialogDescription className="sr-only">Patient et examen à ajouter à la file.</DialogDescription>
             </DialogHeader>
 
             <form onSubmit={handleCreateTicket} className="space-y-4 py-2">
               {/* Patient Selector or Express Registration */}
               <div className="p-3.5 rounded-xl border bg-muted/30 space-y-3">
-                <div className="flex items-center justify-between">
-                  <Label className="text-xs font-bold text-foreground flex items-center gap-1.5">
-                    <ShieldCheck className="size-4 text-emerald-600" />
-                    Patient Enregistré *
-                  </Label>
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setIsExpressPatientMode(!isExpressPatientMode)}
-                    className="h-7 text-xs text-primary font-semibold hover:bg-primary/10 cursor-pointer"
-                  >
-                    {isExpressPatientMode ? "🔍 Choisir un Patient Existant" : "➕ Patient Inexistant ? Enregistrer Express"}
-                  </Button>
-                </div>
-
+                <Label className="text-sm font-medium">Patient *</Label>
                 {!isExpressPatientMode ? (
-                  <Select value={selectedPatientId} onValueChange={setSelectedPatientId}>
-                    <SelectTrigger className="w-full h-11 bg-background font-semibold">
-                      <SelectValue placeholder="Sélectionner un patient enregistré dans le système..." />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {students.length === 0 ? (
-                        <SelectItem value="none" disabled>
-                          Aucun patient enregistré en BDD
-                        </SelectItem>
-                      ) : (
-                        students.map((p) => (
-                          <SelectItem key={p.id} value={p.id.toString()}>
-                            {p.name} ({p.grade !== '' && p.grade != null ? `${p.grade} ans` : 'Âge non renseigné'}) • Tél: {formatPhoneNumber(p.parent_phone) || 'Non renseigné'}
-                          </SelectItem>
-                        ))
-                      )}
-                    </SelectContent>
-                  </Select>
+                  <PatientPicker value={selectedPatient} onChange={setSelectedPatient} onNew={() => setIsExpressPatientMode(true)} />
                 ) : (
                   <div className="space-y-3 p-3 rounded-lg bg-background border border-primary/30">
-                    <div className="flex items-center gap-2 text-xs font-bold text-primary border-b pb-2">
-                      <UserPlus className="size-4" />
-                      Enregistrement Express d'un Nouveau Patient
-                    </div>
+                    <button type="button" className="text-xs text-primary hover:underline" onClick={() => setIsExpressPatientMode(false)}>Rechercher un patient</button>
                     <div className="space-y-1">
-                      <Label htmlFor="express_name" className="text-xs">Nom & Prénom du Patient *</Label>
+                      <Label htmlFor="express_name" className="text-xs">Nom et prénom *</Label>
                       <Input
                         id="express_name"
                         placeholder="ex: Molière Jean-Baptiste"
@@ -672,7 +635,7 @@ export default function QueueManagementPage() {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-2 min-w-0">
-                  <Label htmlFor="modality">Type d'Examen Radiologique</Label>
+                  <Label htmlFor="modality">Examen</Label>
                   <Select value={newModality} onValueChange={setNewModality}>
                     <SelectTrigger id="modality" className="w-full">
                       <SelectValue />
@@ -688,7 +651,7 @@ export default function QueueManagementPage() {
                 </div>
 
                 <div className="space-y-2 min-w-0">
-                  <Label htmlFor="room">Salle d'Attribution *</Label>
+                  <Label htmlFor="room">Salle *</Label>
                   <Select value={newRoom} onValueChange={setNewRoom}>
                     <SelectTrigger id="room" className="w-full">
                       <SelectValue />
@@ -706,7 +669,7 @@ export default function QueueManagementPage() {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-2 min-w-0">
-                  <Label htmlFor="doctor">Médecin Radiologue</Label>
+                  <Label htmlFor="doctor">Médecin</Label>
                   <Select value={newDoctor} onValueChange={setNewDoctor}>
                     <SelectTrigger id="doctor" className="w-full">
                       <SelectValue />
@@ -722,7 +685,7 @@ export default function QueueManagementPage() {
                 </div>
 
                 <div className="space-y-2 min-w-0">
-                  <Label htmlFor="priority">Niveau de Priorité</Label>
+                  <Label htmlFor="priority">Priorité</Label>
                   <Select value={newPriority} onValueChange={(val) => setNewPriority(val as QueuePriority)}>
                     <SelectTrigger id="priority" className="w-full">
                       <SelectValue />
@@ -742,7 +705,7 @@ export default function QueueManagementPage() {
                   Annuler
                 </Button>
                 <Button disabled={submitting || !!queueError} type="submit" className="bg-primary text-primary-foreground font-bold cursor-pointer">
-                  Émettre le Ticket Patient
+                  Ajouter
                 </Button>
               </DialogFooter>
             </form>
