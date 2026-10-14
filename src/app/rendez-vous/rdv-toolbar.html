@@ -1,0 +1,47 @@
+    <div class="toolbar">
+      <div class="view-switcher" role="tablist" aria-label="Vue des rendez-vous">
+        <button class="view-btn" data-view="table"><i class="fas fa-table"></i> Tableau</button>
+        <button class="view-btn" data-view="day">
+          <i class="fas fa-calendar-day"></i> Jour
+        </button>
+        <button class="view-btn" data-view="week">
+          <i class="fas fa-calendar-week"></i> Semaine
+        </button>
+        <button class="view-btn" data-view="month">
+          <i class="fas fa-calendar-alt"></i> Mois
+        </button>
+        <button class="view-btn" data-view="list">
+          <i class="fas fa-list"></i> Liste
+        </button>
+      </div>
+
+      <div class="date-navigation">
+        <button class="nav-arrow" data-action="previous" aria-label="Période précédente"><i class="fas fa-chevron-left"></i></button>
+        <div class="current-date" id="currentDate">25 - 29 Septembre 2026</div>
+        <button class="nav-arrow" data-action="next" aria-label="Période suivante"><i class="fas fa-chevron-right"></i></button>
+        <button class="today-btn" data-action="today">Aujourd'hui</button>
+      </div>
+
+      <div class="filters-toolbar">
+        <select class="filter-select" data-filter="exam" aria-label="Examen du calendrier">
+          <option value="all">Tous examens</option>
+          <option value="IRM">IRM</option>
+          <option value="Scanner">Scanner</option>
+          <option value="Radio">Radiographie</option>
+          <option value="Echo">Échographie</option>
+          <option value="Mammo">Mammographie</option>
+        </select>
+        <select class="filter-select" data-filter="doctor" aria-label="Médecin du calendrier">
+          <option value="all">Tous médecins</option>
+          <!-- DOCTOR_OPTIONS -->
+        </select>
+        <select class="filter-select" data-filter="status" aria-label="Statut du calendrier">
+          <option value="all">Tous statuts</option>
+          <option value="confirmed">Confirmés</option>
+          <option value="waiting">En attente</option>
+          <option value="urgent">Urgent</option>
+          <option value="cancelled">Annulés</option>
+        </select>
+      </div>
+    </div>
+

@@ -37,6 +37,8 @@ import {
 import { useClinicResources } from '@/hooks/use-clinic-resources'
 import { examCategory } from '@/stores/account-store'
 import { toast } from 'sonner'
+import { ReferenceCalendar } from './reference-calendar'
+import { dateOf, weekStart, shiftDate, navigateReferenceDate, referenceStatus, type RdvView } from './rdv-reference'
 
 export default function RendezVousPage() {
   const [searchParams, setSearchParams] = useSearchParams()
@@ -50,6 +52,11 @@ export default function RendezVousPage() {
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0])
   const [selectedRoom, setSelectedRoom] = useState('all')
   const [selectedDoctor, setSelectedDoctor] = useState('all')
+  const [calendarView, setCalendarView] = useState<RdvView>('table')
+  const [selectedStatus, setSelectedStatus] = useState('all')
+  const [cancelTargetId, setCancelTargetId] = useState<number | null>(null)
+  const today = new Date().toISOString().slice(0, 10)
+  const calendarDate = selectedDate || today
 
   // Deletion confirmation state
   const [deleteTargetId, setDeleteTargetId] = useState<number | null>(null)
@@ -73,12 +80,10 @@ export default function RendezVousPage() {
   })
   const [submitting, setSubmitting] = useState(false)
 
-  const fetchAppointments = async () => {
-    setLoading(true)
+  const fetchAppointments = async (showLoading = true) => {
+    if (showLoading) setLoading(true)
     try {
       const data = await getAppointments({
-        exam: selectedRoom !== 'all' ? selectedRoom : undefined,
-        doctor: selectedDoctor !== 'all' ? selectedDoctor : undefined,
         auto_queue: false,
       })
       setAppointments(data || []); setLoadError('')
@@ -101,6 +106,11 @@ export default function RendezVousPage() {
 
   useEffect(() => {
     fetchAppointments()
+    const refresh = () => { void fetchAppointments(false) }
+    const timer = window.setInterval(refresh, 15000)
+    window.addEventListener('clinic-data-changed', refresh)
+    window.addEventListener('focus', refresh)
+    return () => { window.clearInterval(timer); window.removeEventListener('clinic-data-changed', refresh); window.removeEventListener('focus', refresh) }
   }, [selectedDate, selectedRoom, selectedDoctor])
 
   useEffect(() => {
@@ -208,10 +218,14 @@ export default function RendezVousPage() {
   // Computed filtered appointments for list display
   const filteredAppointments = appointments.filter((appt) => {
     // 1. Date Filter (if selectedDate is set)
-    if (selectedDate) {
-      const apptDate = (appt.date_time || '').split(' ')[0].split('T')[0]
-      if (apptDate !== selectedDate) return false
-    }
+    const apptDate = dateOf(appt)
+    if (calendarView === 'week' || calendarView === 'list') {
+      const start = weekStart(calendarDate)
+      if (apptDate < start || apptDate > shiftDate(start, 6)) return false
+    } else if (calendarView === 'month') {
+      if (apptDate.slice(0, 7) !== calendarDate.slice(0, 7)) return false
+    } else if ((selectedDate || calendarView === 'day') && apptDate !== calendarDate) return false
+    if (selectedStatus !== 'all' && referenceStatus(appt) !== selectedStatus) return false
 
     // 2. Room / Exam Filter
     if (selectedRoom !== 'all') {
@@ -221,7 +235,7 @@ export default function RendezVousPage() {
         (appt.exam_type || '').toLowerCase().includes(roomLower) ||
         (appt.room || '').toLowerCase().includes(roomLower) ||
         (appt.location || '').toLowerCase().includes(roomLower)
-      if (!matchRoom) return false
+      if (!matchRoom && examCategory(appt.exam_type || appt.modality_name) !== examCategory(selectedRoom)) return false
     }
 
     // 3. Doctor Filter
@@ -292,6 +306,14 @@ export default function RendezVousPage() {
     }
   }
 
+  const handleCalendarStatus = async (id: number, status: string) => {
+    try {
+      await updateAppointment(id, { status })
+      await fetchAppointments(false)
+      toast.success(status === 'cancelled' ? 'Rendez-vous annulé' : 'Rendez-vous confirmé')
+    } catch (err) { toast.error((err as Error).message) }
+  }
+
   const handleExportCsv = () => {
     window.open('/api/appointments/export.csv', '_blank')
   }
@@ -303,7 +325,7 @@ export default function RendezVousPage() {
       <div className="space-y-6 px-4 md:px-6">
         {/* Top KPIs */}
         <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
-          <KpiCard title="RDV Programmés" value={String(filteredAppointments.length)} change="Planning du jour" trend="neutral" icon={CalendarIcon} />
+          <KpiCard title="RDV Programmés" value={String(filteredAppointments.length)} change={calendarView === 'week' || calendarView === 'list' ? 'Planning de la semaine' : calendarView === 'month' ? 'Planning du mois' : 'Planning du jour'} trend="neutral" icon={CalendarIcon} />
           <KpiCard title="Patients Arrivés" value={String(filteredAppointments.filter((a) => a.status === 'arrived').length)} change="En salle d'attente" trend="up" icon={UserCheck} />
           <KpiCard title="Examens Urgents" value={String(filteredAppointments.filter((a) => a.priority === 'urgent').length)} change="Priorité haute" trend="down" icon={AlertCircle} />
           <KpiCard title="Patients attendus" value={String(filteredAppointments.filter(a => a.status !== 'arrived' && a.status !== 'cancelled').length)} change="À accueillir" trend="up" icon={Clock} />
@@ -312,7 +334,7 @@ export default function RendezVousPage() {
         {/* Filter Bar */}
         <Card className="shadow-xs border-2">
           <CardContent className="p-4 flex flex-col md:flex-row items-center justify-between gap-4">
-            <div className="flex flex-wrap items-center gap-2.5 w-full md:w-auto">
+            {calendarView === 'table' && <div className="flex flex-wrap items-center gap-2.5 w-full md:w-auto">
               {/* Date Filter & Toggle */}
               <div className="flex items-center gap-1.5">
                 <Input
@@ -358,7 +380,7 @@ export default function RendezVousPage() {
                 </SelectContent>
               </Select>
 
-            </div>
+            </div>}
 
             <div className="flex items-center gap-2">
               <Button data-testid="export-appointments-csv" variant="outline" size="sm" onClick={handleExportCsv}>
@@ -372,7 +394,20 @@ export default function RendezVousPage() {
           </CardContent>
         </Card>
 
+        <ReferenceCalendar
+          view={calendarView} date={calendarDate} today={today} appointments={filteredAppointments}
+          doctors={resources.doctors} exam={selectedRoom} doctor={selectedDoctor} status={selectedStatus}
+          onView={view => { setCalendarView(view); if (view === 'table') setSelectedStatus('all') }}
+          onNavigate={direction => setSelectedDate(navigateReferenceDate(calendarDate, calendarView, direction))}
+          onToday={() => setSelectedDate(today)} onExam={setSelectedRoom} onDoctor={setSelectedDoctor} onStatus={setSelectedStatus}
+          onDay={date => { setSelectedDate(date); setCalendarView('day') }}
+          onCreate={(date, time) => { handleOpenCreateModal(); setNewAppt(current => ({ ...current, appt_date: date, time })) }}
+          onEdit={id => { const appointment = appointments.find(item => item.id === id); if (appointment) handleOpenEditModal(appointment) }}
+          onConfirm={id => { void handleCalendarStatus(id, 'confirmed') }} onCancel={setCancelTargetId}
+        />
+
         {/* Appointments List View (Table Only) */}
+        {calendarView === 'table' && (
         <Card className="shadow-xs border-2">
           <CardContent className="p-6">
             <div className="flex items-center justify-between mb-4">
@@ -500,8 +535,15 @@ export default function RendezVousPage() {
               </div>
             )}
           </CardContent>
-        </Card>
+        </Card>)}
       </div>
+
+      <Dialog open={cancelTargetId !== null} onOpenChange={open => { if (!open) setCancelTargetId(null) }}>
+        <DialogContent className="sm:max-w-[420px]">
+          <DialogHeader><DialogTitle>Annuler ce rendez-vous ?</DialogTitle><DialogDescription>Le rendez-vous sera conservé dans le planning avec le statut « Annulé ».</DialogDescription></DialogHeader>
+          <DialogFooter><Button variant="outline" onClick={() => setCancelTargetId(null)}>Retour</Button><Button variant="destructive" onClick={() => { if (cancelTargetId) void handleCalendarStatus(cancelTargetId, 'cancelled'); setCancelTargetId(null) }}>Confirmer l’annulation</Button></DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* Confirmation Dialog for Appointment Deletion */}
       <Dialog open={deleteTargetId !== null} onOpenChange={(open) => !open && setDeleteTargetId(null)}>

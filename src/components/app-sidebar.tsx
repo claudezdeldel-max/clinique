@@ -9,7 +9,6 @@ import {
   CreditCard,
   Stethoscope,
   Megaphone,
-  UserPlus,
   MessageSquare,
   DollarSign,
 } from "lucide-react"
@@ -30,7 +29,6 @@ import {
 } from "@/components/ui/sidebar"
 
 import { useRolePermissionsStore, navigationPermissions } from "@/stores/role-permissions-store"
-import { useClinicPreferencesStore } from '@/stores/clinic-preferences-store'
 import { useThemeSettingsStore } from '@/stores/theme-settings-store'
 import { CimaNavigation } from '@/components/clinic/cima-navigation'
 import { useNavigationCounts } from '@/hooks/use-navigation-counts'
@@ -50,7 +48,7 @@ const baseData = {
     {
       label: "Gestion",
       items: [
-        { title: "Médecin", url: "/medecin", icon: Stethoscope },
+        { title: "Consultation", url: "/medecin", icon: Stethoscope },
         { title: "Messagerie", url: "/chat", icon: MessageSquare },
       ],
     },
@@ -59,7 +57,6 @@ const baseData = {
       items: [
         { title: "Finance et Compta", url: "/finance", icon: DollarSign },
         { title: "Paiements", url: "/payments", icon: CreditCard },
-        { title: "Secrétariat", url: "/secretariat", icon: UserPlus },
         { title: "Paramètres", url: "/settings/user", icon: Settings },
       ],
     },
@@ -71,7 +68,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const designStyle = useThemeSettingsStore(state => state.designStyle)
   const { currentRole, rolePermissions } = useRolePermissionsStore()
   const account = useAccountStore(state => state.user)
-  const serverPermissions = useClinicPreferencesStore(s => s.preferences?.permissions)
 
   const activePermissions = navigationPermissions(account?.role || currentRole, rolePermissions)
 
@@ -79,7 +75,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const filteredGroups = baseData.navGroups
     .map((group) => {
       const allowedItems = group.items.filter((item) => {
-        if (item.url === '/secretariat') return !account || (account.features.ready_files && serverPermissions?.[account.role]?.ready_files?.view !== false)
         return activePermissions.includes(item.url)
       })
       return {
