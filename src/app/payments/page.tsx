@@ -10,7 +10,7 @@ import { Table,TableBody,TableCell,TableHead,TableHeader,TableRow } from "@/comp
 import { Select,SelectContent,SelectItem,SelectTrigger,SelectValue } from "@/components/ui/select"
 import { Dialog,DialogContent,DialogHeader,DialogTitle,DialogDescription,DialogFooter } from "@/components/ui/dialog"
 import { Label } from "@/components/ui/label"
-import { Printer,CreditCard,Search,RefreshCcw,CheckCircle2,Clock,Tag,FileText,TrendingUp } from "lucide-react"
+import { Printer,CreditCard,Search,RefreshCcw,CheckCircle2,Clock,Tag,FileText,ArrowDown } from "lucide-react"
 import { useSchoolData } from "@/hooks/use-school-data"
 import { AddPaymentModal } from "@/components/add-payment-modal"
 import { PaymentReceiptModal } from "@/components/payment-receipt-modal"
@@ -400,7 +400,7 @@ export default function PaymentsPage() {
                 </CardTitle>
               </div>
               <div className="h-10 w-10 rounded-2xl bg-emerald-100 dark:bg-emerald-950 flex items-center justify-center text-emerald-600">
-                <TrendingUp className="h-5 w-5" />
+                <ArrowDown className="h-5 w-5" />
               </div>
             </CardHeader>
 
