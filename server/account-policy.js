@@ -16,7 +16,7 @@ export function defaultFeatures(role) {
 }
 export function publicUser(user) {
   return { id: user.id, username: user.username, name: user.name, role: user.role, email: user.email, phone: user.phone || '',
-    active: Boolean(user.active), features: { ...defaultFeatures(user.role), ...JSON.parse(user.features_json || '{}') },
+    active: Boolean(user.active), is_super_admin: Boolean(user.is_super_admin), features: { ...defaultFeatures(user.role), ...JSON.parse(user.features_json || '{}') },
     call_exam_types: JSON.parse(user.call_exam_types_json || JSON.stringify(EXAM_TYPES)) };
 }
 export function hashPassword(password) {

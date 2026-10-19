@@ -3,6 +3,7 @@ import { useClinicPreferencesStore, formatClinicDate } from '@/stores/clinic-pre
 import { usePrintDialogStore } from '@/stores/print-dialog-store'
 import { useAccountStore } from '@/stores/account-store'
 import { PRINT_TYPES, type PrintType, type PrintJob } from '@/lib/printing'
+import { createClientId } from '@/lib/utils'
 export const escapeText = (value: unknown) => String(value ?? '').replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char]!)
 
 export function buildPrintDocument(title: string, html: string, type?: string) {
@@ -24,7 +25,7 @@ export async function printDocument(title: string, html: string, type: PrintType
   if (usePrintDialogStore.getState().request) throw new Error('Une demande d’impression est déjà ouverte.')
   return new Promise(resolve => usePrintDialogStore.getState().setRequest({
     title, html: buildPrintDocument(title, html, type), type, reportId, token,
-    requestId: crypto.randomUUID(), resolve,
+    requestId: createClientId(), resolve,
   }))
 }
 

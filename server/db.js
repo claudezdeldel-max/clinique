@@ -384,8 +384,8 @@ function migrateTableColumns() {
     ('admin', 'Administrateur'), ('radiologist', 'Médecin'), ('secretary', 'Secrétariat');
   INSERT OR IGNORE INTO account_roles (id, name) SELECT DISTINCT role, role FROM users;`);
   const additions = {
-    users: { phone: "TEXT DEFAULT ''", active: 'INTEGER NOT NULL DEFAULT 1', features_json: "TEXT DEFAULT '{}'", call_exam_types_json: "TEXT DEFAULT '[\"IRM\",\"Scanner\",\"Echo\",\"Radio\",\"Mammo\",\"Other\"]'" },
-    sessions: { last_activity_at: 'TEXT' },
+    users: { phone: "TEXT DEFAULT ''", active: 'INTEGER NOT NULL DEFAULT 1', is_super_admin: 'INTEGER NOT NULL DEFAULT 0', features_json: "TEXT DEFAULT '{}'", call_exam_types_json: "TEXT DEFAULT '[\"IRM\",\"Scanner\",\"Echo\",\"Radio\",\"Mammo\",\"Other\"]'" },
+    sessions: { last_activity_at: 'TEXT', auth_method: "TEXT NOT NULL DEFAULT 'legacy'" },
     exam_payments: { fiscal_json: 'TEXT', queue_id: 'INTEGER', appointment_id: 'INTEGER' },
     waiting_queue: { patient_id: 'INTEGER', appointment_id: 'INTEGER' },
     reports: { queue_id: 'INTEGER', print_started_at: 'TEXT', delivery_status: 'TEXT', patient_informed_at: 'TEXT', delivered_at: 'TEXT' },

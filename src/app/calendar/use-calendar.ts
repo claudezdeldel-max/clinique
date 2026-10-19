@@ -4,7 +4,7 @@ import { useState, useCallback, useEffect } from "react"
 import { toast } from "sonner"
 import { type CalendarEvent } from "./types"
 
-const API_BASE = 'http://localhost:3001/api'
+const API_BASE = '/api'
 
 export interface UseCalendarState {
   selectedDate: Date

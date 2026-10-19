@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from "react"
 import { toast } from "sonner"
 
-const API_BASE = 'http://localhost:3001/api'
+const API_BASE = '/api'
 
 export function useSettings() {
   const [settings, setSettings] = useState<Record<string, any>>({})
@@ -42,9 +42,7 @@ export function useSettings() {
         throw new Error("Erreur de sauvegarde")
       }
     } catch (err) {
-      // Local fallback
-      setSettings(prev => ({ ...prev, [key]: value }))
-      toast.success(`Paramètres "${key}" enregistrés localement.`)
+      toast.error((err as Error).message || 'Le serveur est indisponible. Les paramètres n’ont pas été enregistrés.')
     }
   }
 

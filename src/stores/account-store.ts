@@ -5,7 +5,7 @@ import { useRolePermissionsStore, type UserRole } from './role-permissions-store
 export const FEATURES = { reports: 'Comptes rendus', prescriptions: 'Prescriptions', images: 'Images', ready_files: 'Dossiers prêts', queue_calls: 'Appel des patients' }
 export const EXAMS = { IRM: 'IRM', Scanner: 'Scanner', Echo: 'Échographie', Radio: 'Radiographie', Mammo: 'Mammographie', Other: 'Autres examens' }
 export interface Account {
-  id: number; username: string; name: string; role: UserRole; email: string; phone?: string; active: boolean
+  id: number; username: string; name: string; role: UserRole; email: string; phone?: string; active: boolean; is_super_admin?: boolean
   features: Record<keyof typeof FEATURES, boolean>; call_exam_types: string[]
 }
 export interface AccountRole { id: string; name: string }

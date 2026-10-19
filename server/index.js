@@ -9,11 +9,12 @@ import { registerAccounts } from './accounts.js';
 import { registerClinicResources } from './clinic-resources.js';
 import { attachClinicAudit, registerClinicSettings, readClinicConfig } from './clinic-settings.js';
 import sanitizeHtml from 'sanitize-html';
-import { publicUser, verifyPassword, hashPassword, canCall } from './account-policy.js';
+import { publicUser, canCall } from './account-policy.js';
 import { registerPrinting } from './printing.js';
 import { registerPatientVisits } from './patient-visits.js';
 import { registerFinance } from './finance.js';
 import { serveProductionApp } from './production-static.js';
+import { createLocalNetwork } from './network-settings.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -21,7 +22,7 @@ const uploadsDir = process.env.UPLOADS_PATH ? path.resolve(process.env.UPLOADS_P
 if (!existsSync(uploadsDir)) mkdirSync(uploadsDir, { recursive: true });
 
 const app = express();
-const PORT = process.env.PORT || 3001;
+const localNetwork = createLocalNetwork(app);
 if (process.env.NODE_ENV === 'production') app.set('trust proxy', 1);
 
 app.use(cors());
@@ -31,6 +32,7 @@ app.use(express.json({ limit: '20mb' }));
 initDatabase();
 attachClinicAudit(app, db);
 registerAccounts(app, db);
+localNetwork.register();
 registerClinicResources(app, db);
 registerClinicSettings(app, db, uploadsDir);
 registerPrinting(app, db);
@@ -62,28 +64,10 @@ app.get('/api/health', (req, res) => {
 // Serve uploaded scan files
 app.use('/api/uploads', express.static(uploadsDir));
 
-// ===== Authentication API =====
-app.post('/api/auth/login', (req, res) => {
-  try {
-    const { username, password } = req.body;
-    if (!username || !password) return res.status(400).json({ error: 'Identifiants requis' });
-
-    const user = db.prepare('SELECT * FROM users WHERE username = ?').get(username);
-    if (!user || !user.active || !verifyPassword(password, user.password)) return res.status(401).json({ error: 'Identifiant ou mot de passe incorrect' });
-    if (!user.password.startsWith('scrypt:')) db.prepare('UPDATE users SET password = ? WHERE id = ?').run(hashPassword(password), user.id);
-
-    const token = randomUUID();
-    db.prepare('INSERT INTO sessions (token, user_id, created_at) VALUES (?, ?, ?)').run(token, user.id, new Date().toISOString());
-
-    res.json({ token, user: publicUser(user) });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-
 app.post('/api/auth/logout', (req, res) => {
-  const token = req.headers.authorization?.replace('Bearer ', '');
+  const token = req.headers.authorization?.replace('Bearer ', '') || req.headers.cookie?.match(/(?:^|;\s*)cima_session=([a-zA-Z0-9-]+)/)?.[1];
   if (token) db.prepare('DELETE FROM sessions WHERE token = ?').run(token);
+  res.clearCookie('cima_session', { path: '/' });
   res.json({ message: 'Déconnexion réussie' });
 });
 
@@ -1938,8 +1922,9 @@ app.get('/api/notifications', (req, res) => {
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
-if (process.env.NODE_ENV === 'production') serveProductionApp(app, path.join(__dirname, '..', 'dist'));
+if (existsSync(path.join(__dirname, '..', 'dist', 'index.html')) || process.env.NODE_ENV === 'production') serveProductionApp(app, path.join(__dirname, '..', 'dist'));
 
-app.listen(PORT, '0.0.0.0', () => {
-  console.log(`[RadioMed OS Backend] Express SQLite Server running on http://localhost:${PORT}`);
+localNetwork.start().catch(err => {
+  console.error(err.code === 'EADDRINUSE' ? 'Le port CIMA est déjà utilisé. Fermez l’autre instance ou choisissez un autre port.' : err.message);
+  process.exitCode = 1;
 });

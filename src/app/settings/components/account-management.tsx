@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label'
 import { Switch } from '@/components/ui/switch'
 import { toast } from 'sonner'
 
-const empty = () => ({ name: '', email: '', role: 'radiologist' as Account['role'], active: true,
+const empty = () => ({ name: '', email: '', password: '', role: 'radiologist' as Account['role'], active: true,
   features: { reports: true, prescriptions: true, images: true, ready_files: true, queue_calls: true }, call_exam_types: Object.keys(EXAMS) })
 export function AccountManagement() {
   const user = useAccountStore(s => s.user)
@@ -29,10 +29,10 @@ export function AccountManagement() {
   useEffect(() => { if (user?.role === 'admin') void load() }, [user?.id, user?.role])
   if (user?.role !== 'admin') return <Card><CardHeader><CardTitle>Comptes et fonctions</CardTitle><CardDescription>Connectez-vous avec un compte administrateur depuis le menu latéral pour gérer les comptes.</CardDescription></CardHeader></Card>
   return <div className="space-y-6">
-    <Card><CardHeader><CardTitle>Comptes et fonctions</CardTitle><CardDescription>Créez des comptes par rôle et configurez leurs fonctions. L’accès se fait par choix du compte, sans identifiant ni mot de passe.</CardDescription></CardHeader>
+    <Card><CardHeader><CardTitle>Comptes et fonctions</CardTitle><CardDescription>Créez des comptes par rôle et configurez leurs fonctions. Chaque utilisateur se connecte avec son mot de passe personnel.</CardDescription></CardHeader>
       <CardContent className="space-y-5">
         {error && <div role="alert" className="text-destructive">{error}<Button variant="outline" onClick={load}>Réessayer</Button></div>}
-        <div className="flex flex-wrap gap-2">{accounts.map(account => <Button key={account.id} disabled={busy} variant={selectedId === account.id ? 'default' : 'outline'} onClick={() => { setSelectedId(account.id); setDraft({ ...account }) }}>{account.name}{!account.active && ' (désactivé)'}</Button>)}
+        <div className="flex flex-wrap gap-2">{accounts.map(account => <Button key={account.id} disabled={busy} variant={selectedId === account.id ? 'default' : 'outline'} onClick={() => { setSelectedId(account.id); setDraft({ ...account, password: '' }) }}>{account.name}{!account.active && ' (désactivé)'}</Button>)}
           <Button disabled={busy} variant="secondary" onClick={() => { setSelectedId(undefined); setDraft(empty()) }}>Nouveau compte</Button>
         </div>
         <form className="space-y-5" onSubmit={async e => {
@@ -40,12 +40,12 @@ export function AccountManagement() {
           try {
             const saved = await saveAccount(draft, selectedId)
             if (saved.id === user.id) useAccountStore.getState().setUser(saved)
-            setSelectedId(saved.id); setDraft({ ...saved }); await load(); toast.success('Compte enregistré')
+            setSelectedId(saved.id); setDraft({ ...saved, password: '' }); await load(); toast.success('Compte enregistré')
           } catch (err) { toast.error((err as Error).message) } finally { setBusy(false) }
         }}>
           <div className="grid sm:grid-cols-2 gap-4">
             {(['name', 'email'] as const).map(key => <div key={key} className="space-y-2"><Label htmlFor={`account-${key}`}>{key === 'name' ? 'Nom du compte' : 'Email (facultatif)'}</Label><Input id={`account-${key}`} type={key === 'email' ? 'email' : 'text'} required={key === 'name'} value={draft[key]} onChange={e => setDraft({ ...draft, [key]: e.target.value })} /></div>)}
-            <div className="space-y-2"><Label htmlFor="account-role">Rôle</Label><select id="account-role" className="w-full rounded-md border p-2 bg-background" value={draft.role} onChange={e => setDraft({ ...draft, role: e.target.value })}>{roles.map(role => <option key={role.id} value={role.id}>{role.name}</option>)}</select></div>
+            <div className="space-y-2"><Label htmlFor="account-password">{selectedId ? 'Nouveau mot de passe (facultatif)' : 'Mot de passe'}</Label><Input id="account-password" type="password" autoComplete="new-password" required={!selectedId} minLength={4} maxLength={128} value={draft.password} onChange={e => setDraft({ ...draft, password: e.target.value })} /></div><div className="space-y-2"><Label htmlFor="account-role">Rôle</Label><select id="account-role" className="w-full rounded-md border p-2 bg-background" value={draft.role} onChange={e => setDraft({ ...draft, role: e.target.value })}>{roles.map(role => <option key={role.id} value={role.id}>{role.name}</option>)}</select></div>
             <div className="flex items-center gap-3"><Switch id="account-active" checked={draft.active} onCheckedChange={active => setDraft({ ...draft, active })} /><Label htmlFor="account-active">Compte actif</Label></div>
           </div>
           <fieldset className="space-y-3"><legend className="font-semibold mb-3">Fonctions activées</legend><div className="grid sm:grid-cols-2 gap-3">{Object.entries(FEATURES).map(([key, label]) => <div key={key} className="flex items-center justify-between border rounded-lg p-3"><Label htmlFor={`feature-${key}`}>{label}</Label><Switch id={`feature-${key}`} checked={draft.features[key as keyof typeof FEATURES]} onCheckedChange={checked => setDraft({ ...draft, features: { ...draft.features, [key]: checked } })} /></div>)}</div></fieldset>

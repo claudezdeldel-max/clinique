@@ -13,20 +13,20 @@ compile le frontend puis lance les deux sur le port fourni par Railway.
 
    | Variable | Valeur |
    | --- | --- |
-   | `APP_ACCESS_USERNAME` | `clinique` |
-   | `APP_ACCESS_PASSWORD` | Mot de passe aléatoire de 16 caractères minimum |
    | `DB_PATH` | `/data/clinic.db` |
    | `UPLOADS_PATH` | `/data/uploads` |
    | `SEED_DEMO_DATA` | `false` |
 
 4. Déployer. Railway détecte le Dockerfile et utilise `/api/health` pour vérifier
    le démarrage. Conserver **une seule réplique** pour cette base SQLite.
-5. Dans les paramètres réseau du service, générer un domaine public. Ouvrir son
-   URL HTTPS et saisir les identifiants `APP_ACCESS_*` dans la fenêtre du navigateur.
-6. Choisir le compte de la clinique dans le menu latéral.
+5. Dans les paramètres réseau du service, générer un domaine public. Ouvrir son URL HTTPS.
+6. Saisir uniquement le mot de passe **admin** pour accéder au super administrateur.
+   Les mots de passe des autres comptes se définissent dans **Paramètres → Utilisateurs**.
 
 La protection du site s'applique au frontend, aux API et aux fichiers médicaux.
-Seule la sonde de disponibilité `/api/health` reste accessible sans mot de passe.
+Seule la sonde de disponibilité `/api/health` reste accessible sans connexion.
+L'interface de connexion est publique et les API médicales nécessitent une session.
+Le sélecteur de comptes sans mot de passe est désactivé, et ses anciennes sessions expirent lors de la migration.
 Les valeurs secrètes se configurent dans Railway, jamais dans GitHub.
 
 ## Données
@@ -45,7 +45,7 @@ Railway fonctionne sous Linux et propose **Télécharger PDF**. Les documents so
 préparés par Chromium dans le conteneur, puis téléchargés sur le poste utilisateur.
 L'impression directe Windows reste disponible pour l'installation locale.
 
-## Vérifications
+## Construction
 
 ```sh
 npm ci

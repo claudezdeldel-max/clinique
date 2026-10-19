@@ -5,6 +5,24 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
+/** crypto.randomUUID is restricted on plain HTTP LAN addresses. */
+export function createClientId(): string {
+  if (globalThis.crypto.randomUUID) return globalThis.crypto.randomUUID()
+  const bytes = globalThis.crypto.getRandomValues(new Uint8Array(16))
+  bytes[6] = (bytes[6] & 15) | 64; bytes[8] = (bytes[8] & 63) | 128
+  const hex = Array.from(bytes, b => b.toString(16).padStart(2, '0')).join('')
+  return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20)}`
+}
+
+export async function copyText(value: string): Promise<void> {
+  try { if (navigator.clipboard?.writeText) { await navigator.clipboard.writeText(value); return } } catch { /* Use the selection API on HTTP LAN pages. */ }
+  const field = document.createElement('textarea')
+  field.value = value; field.style.cssText = 'position:fixed;left:-9999px;top:0'
+  document.body.appendChild(field); field.select()
+  try { if (!document.execCommand('copy')) throw new Error('Copie indisponible. Sélectionnez et copiez l’adresse manuellement.') }
+  finally { field.remove() }
+}
+
 /** Preserve the country sign and every digit, grouping phone numbers in pairs. */
 export function formatPhoneNumber(value?: string | number | null): string {
   const text = String(value ?? '').trim()

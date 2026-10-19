@@ -10,16 +10,18 @@ export class ApiError extends Error {
 }
 
 export async function fetchApi<T>(endpoint: string, options?: RequestInit): Promise<T> {
+  const sessionToken = useAccountStore.getState().token
   const res = await fetch(`${API_BASE}${endpoint}`, {
     ...options,
     headers: {
       'Content-Type': 'application/json',
-      ...(useAccountStore.getState().token ? { Authorization: `Bearer ${useAccountStore.getState().token}` } : {}),
+      ...(sessionToken ? { Authorization: `Bearer ${sessionToken}` } : {}),
       ...options?.headers,
     },
   })
   if (!res.ok) {
     const err = await res.json().catch(() => ({ error: 'Une erreur est survenue' }))
+    if (res.status === 401 && endpoint !== '/auth/login' && useAccountStore.getState().token === sessionToken) useAccountStore.getState().clear()
     throw new ApiError(err.error || `Erreur serveur ${res.status}`, res.status)
   }
   const data = await res.json()
@@ -31,6 +33,7 @@ export async function fetchApi<T>(endpoint: string, options?: RequestInit): Prom
 
 export const getAccounts = () => fetchApi<Account[]>('/accounts')
 export const getAccountDirectory = () => fetchApi<AccountDirectory>('/auth/accounts')
+export const loginWithPassword = (password: string) => fetchApi<{ token: string; user: Account }>('/auth/login', { method: 'POST', body: JSON.stringify({ password }) })
 export const selectAccount = (accountId: number) => fetchApi<{ token: string; user: Account }>('/auth/select-account', { method: 'POST', body: JSON.stringify({ account_id: accountId }) })
 export const createAccountRole = (name: string) => fetchApi<AccountRole>('/account-roles', { method: 'POST', body: JSON.stringify({ name }) })
 export const saveAccount = (data: Partial<Account> & { password?: string }, id?: number) => fetchApi<Account>(id ? `/accounts/${id}` : '/accounts', { method: id ? 'PUT' : 'POST', body: JSON.stringify(data) })

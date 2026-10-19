@@ -18,3 +18,7 @@ server/uploads
 *.docx
 *.pdf
 *.log
+output
+server/network-settings.local.json
+server/network-settings.local.json.tmp
+server/logs

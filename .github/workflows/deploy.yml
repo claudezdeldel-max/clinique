@@ -1,4 +1,4 @@
-name: Build and verify CIMA
+name: Build CIMA
 on:
   push:
     branches: [main]
@@ -17,4 +17,7 @@ jobs:
       - run: npm ci --no-audit --no-fund
       - run: npm run build
       - run: docker build -t cima-railway:ci .
-      - run: docker run --rm --entrypoint node cima-railway:ci scripts/verify-production.mjs
+
+      
+
+

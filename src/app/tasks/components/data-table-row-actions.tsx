@@ -3,6 +3,7 @@
 import type { Row } from "@tanstack/react-table"
 import { MoreHorizontal, Trash2, Copy } from "lucide-react"
 import { toast } from "sonner"
+import { copyText } from "@/lib/utils"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -16,7 +17,7 @@ import {
 
 import { taskSchema } from "../data/schema"
 
-const API_BASE = 'http://localhost:3001/api'
+const API_BASE = '/api'
 
 interface DataTableRowActionsProps<TData> {
   row: Row<TData>
@@ -39,9 +40,9 @@ export function DataTableRowActions<TData>({
     }
   }
 
-  const handleCopyId = () => {
-    navigator.clipboard.writeText(String(task.id))
-    toast.success(`Code patient ${task.id} copié`)
+  const handleCopyId = async () => {
+    try { await copyText(String(task.id)); toast.success(`Code patient ${task.id} copié`) }
+    catch (err) { toast.error((err as Error).message) }
   }
 
   return (

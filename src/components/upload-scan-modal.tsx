@@ -2,6 +2,7 @@
 
 import { useState, useRef } from "react"
 import { Upload, Image as ImageIcon, CheckCircle2, FileUp, Scan } from "lucide-react"
+import { toast } from 'sonner'
 
 import { Button } from "@/components/ui/button"
 import {
@@ -62,7 +63,7 @@ export function UploadScanModal({ patientName, onUploadSuccess, triggerButton }:
 
     try {
       // Upload to server
-      const res = await fetch('http://localhost:3001/api/scans/upload', {
+      const res = await fetch('/api/scans/upload', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ data: imagePreview, filename: `scan-${Date.now()}.png` }),
@@ -71,12 +72,12 @@ export function UploadScanModal({ patientName, onUploadSuccess, triggerButton }:
         const { url } = await res.json()
         onUploadSuccess(url, examType, reportNote)
       } else {
-        // Fallback: use base64 data URL directly
-        onUploadSuccess(imagePreview, examType, reportNote)
+        const error = await res.json().catch(() => ({ error: 'Enregistrement impossible.' }))
+        throw new Error(error.error)
       }
-    } catch {
-      // Server offline fallback: use base64 data URL directly
-      onUploadSuccess(imagePreview, examType, reportNote)
+    } catch (err) {
+      toast.error((err as Error).message || 'Le serveur est indisponible. Le fichier est conservé pour réessayer.')
+      return
     }
 
     setOpen(false)

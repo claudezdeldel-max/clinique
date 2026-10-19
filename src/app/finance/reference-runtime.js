@@ -1,5 +1,6 @@
 import Alpine from 'alpinejs';
 import Chart from 'chart.js/auto';
+import { createClientId, copyText } from '@/lib/utils';
 
 // Keep the supplied HTML and Alpine bindings intact; connect only Finance.
 let fluxChart, modeChart;
@@ -93,7 +94,7 @@ Alpine.data('financeComptaApp', () => ({
     modeChart.update('none');
   },
   openCollection(invoice) {
-    this.collection = { ...invoice, amount: invoice.montant, method: this.paymentMethods[0] || '', request_id: crypto.randomUUID() };
+    this.collection = { ...invoice, amount: invoice.montant, method: this.paymentMethods[0] || '', request_id: createClientId() };
     this.formError = ''; this.collectionOpen = true;
   },
   async saveCollection() {
@@ -106,7 +107,7 @@ Alpine.data('financeComptaApp', () => ({
     finally { this.saving = false; }
   },
   openExpense() {
-    this.expense = { date: this.today, description: '', category: 'Fournitures', party: '', amount: '', method: this.paymentMethods[0] || '', request_id: crypto.randomUUID() };
+    this.expense = { date: this.today, description: '', category: 'Fournitures', party: '', amount: '', method: this.paymentMethods[0] || '', request_id: createClientId() };
     this.formError = ''; this.expenseOpen = true;
   },
   async saveExpense() {
@@ -123,7 +124,7 @@ Alpine.data('financeComptaApp', () => ({
     this.formError = ''; this.reminderOpen = true;
   },
   async copyReminder() {
-    try { await navigator.clipboard.writeText(this.reminder); this.showToast('Texte de relance copié'); }
+    try { await copyText(this.reminder); this.showToast('Texte de relance copié'); }
     catch { this.formError = 'Sélectionnez le texte pour le copier.'; }
   },
   number(value) { return new Intl.NumberFormat('fr-DZ', { maximumFractionDigits: 2 }).format(value || 0); },
