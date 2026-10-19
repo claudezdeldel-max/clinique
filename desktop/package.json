@@ -1,0 +1,69 @@
+{
+  "name": "cima-desktop",
+  "productName": "CIMA",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Application Windows CIMA pour les postes de la clinique",
+  "author": "CIMA",
+  "license": "MIT",
+  "main": "main.cjs",
+  "scripts": {
+    "icons": "node build-icons.cjs",
+    "start": "electron .",
+    "dist": "npm run icons && electron-builder --win nsis --x64 --publish never"
+  },
+  "build": {
+    "appId": "app.cima.clinique",
+    "productName": "CIMA",
+    "asar": true,
+    "directories": {
+      "output": "../output/cima-windows",
+      "buildResources": "assets"
+    },
+    "files": [
+      "main.cjs",
+      "settings-preload.cjs",
+      "pages/**",
+      "assets/cima.png",
+      "package.json"
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "assets/cima.ico",
+      "artifactName": "CIMA-Setup-${version}-${arch}.${ext}",
+      "requestedExecutionLevel": "asInvoker"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowElevation": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "CIMA",
+      "uninstallDisplayName": "CIMA",
+      "installerIcon": "assets/cima.ico",
+      "uninstallerIcon": "assets/cima.ico",
+      "installerLanguages": [
+        "fr_FR",
+        "en_US"
+      ],
+      "language": "1036",
+      "displayLanguageSelector": false,
+      "runAfterFinish": false,
+      "deleteAppDataOnUninstall": false
+    }
+  },
+  "devDependencies": {
+    "@resvg/resvg-js": "2.6.2",
+    "electron": "44.9.0",
+    "electron-builder": "26.15.3"
+  }
+}

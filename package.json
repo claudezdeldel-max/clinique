@@ -8,6 +8,7 @@
     "server": "node server/index.js",
     "start": "node server/index.js",
     "build": "tsc -b && vite build",
+    "desktop:build": "npm --prefix desktop ci --no-audit --no-fund && npm --prefix desktop run dist",
     "lint": "eslint .",
     "preview": "vite preview"
   },

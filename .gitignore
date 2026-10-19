@@ -100,3 +100,4 @@ rendered/
 server/network-settings.local.json
 server/network-settings.local.json.tmp
 server/logs/
+output/cima-windows/

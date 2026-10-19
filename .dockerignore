@@ -19,6 +19,7 @@ server/uploads
 *.pdf
 *.log
 output
+desktop
 server/network-settings.local.json
 server/network-settings.local.json.tmp
 server/logs
